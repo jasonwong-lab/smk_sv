@@ -1,0 +1,6 @@
+snakefile: Snakefile
+printshellcmds: True
+keep-incomplete: True
+use-singularity: True
+cores: all
+singularity-args: "--bind /storage5,/storage2,/home/mjhk"

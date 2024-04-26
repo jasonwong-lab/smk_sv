@@ -1,0 +1,312 @@
+import os
+
+
+# *--------------------------------------------------------------------------* #
+# * configuration                                                            * #
+# *--------------------------------------------------------------------------* #
+configfile: "../config/config.yaml"
+
+
+pepfile: "../config/pep/config.yaml"
+
+
+container: os.path.abspath("singularities/sv")
+
+
+wildcard_constraints:
+    sample="\w+",
+    type_sv="\w+",
+    caller="\w+",
+
+
+workdir: config["dir_run"]
+
+
+# *--------------------------------------------------------------------------* #
+# * Define results to be retrieved                                           * #
+# *--------------------------------------------------------------------------* #
+rule all:
+    input:
+        vcf=expand(
+            "{caller}/ZN/{caller}.vcf",
+            caller=config["caller"]
+        ),
+        # expand(
+        #     "survivor/{sample}/final/{sample}.{type_sv}.merged.vcf",
+        #     sample=pep.sample_table["sample_name"],
+        #     type_sv=config["type_sv"],
+        # ),
+
+
+# *--------------------------------------------------------------------------* #
+# * All the rules                                                            * #
+# *--------------------------------------------------------------------------* #
+if config["map_fastq"]:
+
+    include: "rules/minimap2.smk"
+
+
+if "cutesv" in config["caller"]:
+
+    include: "rules/cutesv.smk"
+
+
+if "sniffles" in config["caller"]:
+
+    include: "rules/sniffles.smk"
+
+
+if "svim" in config["caller"]:
+
+    include: "rules/svim.smk"
+
+
+if "severus" in config["caller"]:
+
+    include: "rules/severus.smk"
+
+
+if "svision" in config["caller"]:
+
+    include: "rules/svision.smk"
+
+
+if "debreak" in config["caller"]:
+
+    include: "rules/debreak.smk"
+
+
+if "delly" in config["caller"]:
+
+    include: "rules/delly.smk"
+
+
+if "nanosv" in config["caller"]:
+
+    include: "rules/nanosv.smk"
+
+
+if "nanovar" in config["caller"]:
+
+    include: "rules/nanovar.smk"
+
+
+# rule filter_sv:
+#     input:
+#         vcf="{caller}/{sample}/{caller}.vcf",
+#         bam="minimap2/{sample}/{sample}.sorted.bam",
+#         fasta=config["fasta"],
+#     output:
+#         vcf_filtered=temp("{caller}/{sample}/{caller}.filtered.vcf"),
+#         vcf_duphold=temp("{caller}/{sample}/{caller}.filtered.duphold.vcf"),
+#         vcf_duphold_filtered="{caller}/{sample}/{caller}.duphold.filtered.vcf",
+#     params:
+#         min_num_reads=config["min_num_reads"],
+#         min_length_sv=config["min_length_sv"],
+#         min_coverage=config["min_coverage"],
+#     threads: config["threads"]
+#     log:
+#         "logs/{sample}/filter_sv.{caller}.log",
+#     script:
+#         scripts/filter_sv.sh
+#
+#
+# rule split_vcf:
+#     input:
+#         vcf_filtered="{caller}/{sample}/{caller}.duphold.filtered.vcf",
+#     output:
+#         vcf_splitted="{caller}/{sample}/{caller}.{type_sv}.vcf",
+#     log:
+#         "logs/{sample}/split_vcf.{caller}.{type_sv}.log",
+#     script:
+#         scripts/split_vcf.sh
+#
+#
+# rule annotate_sv:
+#     input:
+#         vcf="{caller}/{sample}/{caller}.{type_sv}.vcf",
+#         fasta=config["fasta"],
+#         dir_db_snpeff=config["dir_db_snpeff"],
+#         dir_db_vep=config["dir_db_vep"],
+#     output:
+#         vcf_snpeff=protected("{caller}/{sample}/{caller}.{type_sv}.snpeff.vcf"),
+#         vcf_vep=protected("{caller}/{sample}/{caller}.{type_sv}.snpeff.vep.vcf"),
+#     params:
+#         genome=config["genome"],
+#         version_cache_snpeff=config["version_cache_snpeff"],
+#         version_cache_vep=config["version_cache_vep"],
+#     threads: config["threads"]
+#     log:
+#         "logs/{sample}/annotate_sv.{caller}.{type_sv}.log",
+#     script:
+#         scripts/annotate_sv.sh
+#
+#
+# rule annotate_sv_annotsv:
+#     input:
+#         vcf="{caller}/{sample}/{caller}.{type_sv}.vcf",
+#     output:
+#         tsv=touch(protected("{caller}/{sample}/{caller}.{type_sv}.annotsv.tsv")),
+#     params:
+#         genome=config["genome"],
+#     container: None
+#     # !----- run only 1 sample at a time or probably fails ------------------! #
+#     threads: workflow.cores
+#     logs:
+#         "logs/{sample}/annotate_sv_annotsv.{caller}.{type_sv}.log",
+#     # ?----- abolish retries finally ----------------------------------------? #
+#     # // retries: 10
+#     shell:
+#         """
+#         AnnotSV -genomeBuild {params.genome} -SVinputFile {input.vcf} -outputFile {output.tsv} -overwrite 1> {log} 2>&1
+#         """
+
+
+# # *--------------------------------------------------------------------------* #
+# # * this part should be tailored accroding to callers and datasets           * #
+# # *--------------------------------------------------------------------------* #
+# rule filter_sv_further:
+#     input:
+#         vcf="{caller}/{sample}/{caller}.{type_sv}.vcf",
+#     output:
+#         vcf_filtered="{caller}/{sample}/filtered/{caller}.{type_sv}.vcf",
+#     params:
+#         min_length_sv=config["min_length_sv"],
+#         min_num_reads=config["min_num_reads"],
+#         min_coverage=config["min_coverage"],
+#     log:
+#         "logs/{sample}/filter_sv_further.{caller}.{type_sv}.log",
+#     script:
+#         scripts/filter_sv_further.sh
+
+
+# rule merge_sv_survivor:
+#     input:
+#         vcf_cutesv="cutesv/{sample}/cutesv.{type_sv}.vcf",
+#         vcf_sniffles="sniffles/{sample}/sniffles.{type_sv}.vcf",
+#         vcf_svim="svim/{sample}/svim.{type_sv}.vcf",
+#     output:
+#         list_vcfs="survivor/{sample}/vcfs.{type_sv}.list",
+#         vcf_merged_tmp=temp("survivor/{sample}/{sample}.{type_sv}.merged.vcf.tmp"),
+#         tab_rename=temp("survivor/{sample}/{sample}.{type_sv}.rename.tab"),
+#         vcf_merged="survivor/{sample}/{sample}.{type_sv}.merged.vcf",
+#     log:
+#         "logs/{sample}/merge_sv_survivor.{type_sv}.log",
+#     shell:
+#         """
+#         {{ echo -e "$(realpath {input.vcf_sniffles})\\n$(realpath {input.vcf_cutesv})\\n$(realpath {input.vcf_svim})" > {output.list_vcfs}
+#         formula="300 2 1 1 0 50"
+#         if [ "{wildcards.type_sv}" == "DUP" ]; then
+#             formula="300 2 1 0 0 50"
+#         fi
+#         SURVIVOR merge {output.list_vcfs} ${{formula}} {output.vcf_merged_tmp}
+#
+#         echo -e "{wildcards.sample}\\t{wildcards.sample}_sniffles\\n{wildcards.sample}_1\\t{wildcards.sample}_cutesv\\n{wildcards.sample}_2\\t{wildcards.sample}_svim" > {output.tab_rename}
+#         bcftools reheader -s {output.tab_rename} {output.vcf_merged_tmp} > {output.vcf_merged}; }} \\
+#         1> {log} 2>&1
+#         """
+#
+#
+# rule extract_annotation:
+#     input:
+#         vcf_vep="{caller}/{sample}/{caller}.{type_sv}.snpeff.vep.vcf",
+#         vcf_merged="survivor/{sample}/{sample}.{type_sv}.merged.vcf",
+#     output:
+#         tab="survivor/{sample}/{sample}.{caller}.{type_sv}.tab",
+#         ids=touch(temp("survivor/{sample}/{caller}.{type_sv}.id")),
+#         vcf_extracted="{caller}/{sample}/merged/{caller}.{type_sv}.snpeff.vep.vcf",
+#     log:
+#         "logs/{sample}/extract_annotation.{caller}.{type_sv}.log",
+#     shell:
+#         """
+#         {{ bcftools query -f'%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%ID]' {input.vcf_merged} | awk -F'\\t' -v OFS='\\t' '{{split($5, sniffles, "="); split($6, cutesv, "="); split($7, svim, "="); print($1, $2, $3, $4, sniffles[2], cutesv[2], svim[2])}}' > {output.tab}
+#
+#         num_ids=$(wc -l {output.tab})
+#         if [ "{wildcards.caller}" == "sniffles" ]; then
+#             cut -f 5 {output.tab} | {{ grep -v 'NaN' || true; }} > {output.ids}
+#         elif [ "{wildcards.caller}" == "cutesv" ]; then
+#             cut -f 6 {output.tab} | {{ grep -v 'NaN' || true; }}  > {output.ids}
+#         elif [ "{wildcards.caller}" == "svim" ]; then
+#             cut -f 7 {output.tab} | {{ grep -v 'NaN' || true; }}  > {output.ids}
+#         fi
+#
+#         bcftools view -i "ID=@{output.ids}" {input.vcf_vep} > {output.vcf_extracted}; }} \\
+#         1> {log} 2>&1
+#         """
+#
+#
+# rule convert_annotation:
+#     input:
+#         vcf_extracted="{caller}/{sample}/merged/{caller}.{type_sv}.snpeff.vep.vcf",
+#         fasta=config["fasta"],
+#     output:
+#         maf="{caller}/{sample}/merged/{caller}.{type_sv}.snpeff.vep.maf",
+#         tsv="{caller}/{sample}/merged/{caller}.{type_sv}.snpeff.vep.tsv",
+#     params:
+#         genome=config["genome"],
+#         version_cache_vep=config["version_cache_vep"],
+#     log:
+#         "logs/{sample}/convert_annotation.{caller}.{type_sv}.log",
+#     shell:
+#         """
+#         {{ vcf2maf.pl --input-vcf {input.vcf_extracted} --output-maf {output.maf} --inhibit-vep --ncbi-build {params.genome} --cache-version {params.version_cache_vep} --ref-fasta {input.fasta} --vcf-tumor-id {wildcards.sample} --tumor-id {wildcards.sample}
+#
+#         if [ "{wildcards.caller}" == "svim" ]; then
+#             snpsift extractFields -s "," -e "." {input.vcf_extracted} \\
+#             "CHROM" "POS" "ID" "REF" "ALT" "QUAL" \\
+#             "GEN[*].GT" "GEN[*].DP" "GEN[*].AD" \\
+#             "ANN[*].ALLELE" "ANN[*].EFFECT" "ANN[*].IMPACT" "ANN[*].GENE" "ANN[*].GENEID" "ANN[*].FEATURE" "ANN[*].FEATUREID" "ANN[*].BIOTYPE" "ANN[*].RANK" "ANN[*].HGVS_C" "ANN[*].HGVS_P" "ANN[*].CDNA_POS" "ANN[*].CDNA_LEN" "ANN[*].CDS_POS" "ANN[*].CDS_LEN" "ANN[*].AA_POS" "ANN[*].AA_LEN" "ANN[*].DISTANCE" "ANN[*].ERRORS" \\
+#             "LOF[*].GENE" "LOF[*].GENEID" "LOF[*].NUMTR" "LOF[*].PERC" \\
+#             "NMD[*].GENE" "NMD[*].GENEID" "NMD[*].NUMTR" "NMD[*].PERC" > {output.tsv}
+#         else
+#             snpsift extractFields -s "," -e "." {input.vcf_extracted} \\
+#             "CHROM" "POS" "ID" "REF" "ALT" "QUAL" \\
+#             "GEN[*].GT" "GEN[*].DR" "GEN[*].DV" \\
+#             "ANN[*].ALLELE" "ANN[*].EFFECT" "ANN[*].IMPACT" "ANN[*].GENE" "ANN[*].GENEID" "ANN[*].FEATURE" "ANN[*].FEATUREID" "ANN[*].BIOTYPE" "ANN[*].RANK" "ANN[*].HGVS_C" "ANN[*].HGVS_P" "ANN[*].CDNA_POS" "ANN[*].CDNA_LEN" "ANN[*].CDS_POS" "ANN[*].CDS_LEN" "ANN[*].AA_POS" "ANN[*].AA_LEN" "ANN[*].DISTANCE" "ANN[*].ERRORS" \\
+#             "LOF[*].GENE" "LOF[*].GENEID" "LOF[*].NUMTR" "LOF[*].PERC" \\
+#             "NMD[*].GENE" "NMD[*].GENEID" "NMD[*].NUMTR" "NMD[*].PERC" > {output.tsv}
+#         fi
+#         sed -i '1s/GEN\[\*\]\.//g ; 1s/ANN\[\*\]\.//g ; 1s/\[\*\]//g' {output.tsv}; }} \\
+#         1> {log} 2>&1
+#         """
+#
+#
+# rule filter_sv_annotation:
+#     input:
+#         annotsv=rules.annotate_sv_annotsv.output.tsv,
+#         maf=rules.convert_annotation.output.maf,
+#         tsv=rules.convert_annotation.output.tsv,
+#         tab=rules.extract_annotation.output.tab,
+#         vcf=rules.extract_annotation.output.vcf_extracted,
+#     output:
+#         vcf_final="{caller}/{sample}/merged/filtered/{caller}.{type_sv}.snpeff.vep.vcf",
+#         ids=temp("{caller}/{sample}/merged/filtered/tmp.{type_sv}"),
+#         rdata="{caller}/{sample}/merged/filtered/{caller}.{type_sv}.RData",
+#         table="{caller}/{sample}/merged/filtered/{caller}.{type_sv}.tsv",
+#     params:
+#         libs_r=config["libs_r"],
+#     script:
+#         scripts/filter_sv_annotation.R
+#
+#
+# rule merge_sv_filtered_survivor:
+#     input:
+#         vcf_cutesv="cutesv/{sample}/merged/filtered/cutesv.{type_sv}.snpeff.vep.vcf",
+#         vcf_sniffles="sniffles/{sample}/merged/filtered/sniffles.{type_sv}.snpeff.vep.vcf",
+#         vcf_svim="svim/{sample}/merged/filtered/svim.{type_sv}.snpeff.vep.vcf",
+#     output:
+#         list_vcfs="survivor/{sample}/final/vcfs.{type_sv}.list",
+#         vcf_merged_tmp=temp("survivor/{sample}/final/{sample}.{type_sv}.merged.vcf.tmp"),
+#         tab_rename=temp("survivor/{sample}/final/{sample}.{type_sv}.rename.tab"),
+#         vcf_merged="survivor/{sample}/final/{sample}.{type_sv}.merged.vcf",
+#     log:
+#         "logs/{sample}/merge_sv_filtered_survivor.{type_sv}.log",
+#     shell:
+#         """
+#         {{ echo -e "$(realpath {input.vcf_sniffles})\\n$(realpath {input.vcf_cutesv})\\n$(realpath {input.vcf_svim})" > {output.list_vcfs}
+#         SURVIVOR merge {output.list_vcfs} 9999 1 0 0 0 50 {output.vcf_merged_tmp}
+#
+#         echo -e "{wildcards.sample}\\t{wildcards.sample}_sniffles\\n{wildcards.sample}_1\\t{wildcards.sample}_cutesv\\n{wildcards.sample}_2\\t{wildcards.sample}_svim" > {output.tab_rename}
+#         bcftools reheader -s {output.tab_rename} {output.vcf_merged_tmp} > {output.vcf_merged}; }} \\
+#         1> {log} 2>&1
+#         """

@@ -1,0 +1,4 @@
+latency-wait: !!int 60
+cluster: "qsub -N smk-{rule}-{wildcards}-{jobid} -l nodes=1:ppn=12,mem=50gb,walltime=24:00:00 -q medium -o logs/pbs/smk-{rule}-{wildcards}-{jobid}.out -e logs/pbs/smk-{rule}-{wildcards}-{jobid}.err -j oe -V -M mjhk@connect.hku.hk -m ae"
+cluster-status: status.py
+jobs: 12

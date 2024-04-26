@@ -1,0 +1,6 @@
+latency-wait: !!int 60
+executor: cluster-generic
+cluster-generic-submit-cmd: "qsub -N smk-{rule}-{wildcards}-{jobid} -l nodes=1:ppn=12,mem=50gb,walltime=24:00:00 -q medium -o logs/pbs/smk-{rule}-{wildcards}-{jobid}.out -e logs/pbs/smk-{rule}-{wildcards}-{jobid}.err -j oe -V -M mjhk@connect.hku.hk -m ae"
+cluster-generic-status-cmd: status.py
+jobs: 12
+# cluster-generic-cancel-cmd: cancel.py # "qdel {cluster.job-id}"
