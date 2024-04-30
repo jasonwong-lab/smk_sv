@@ -28,7 +28,7 @@ workdir: config["dir_run"]
 rule all:
     input:
         vcf=expand(
-            "{caller}/ZN/{caller}.vcf",
+            "{caller}/XWL/{caller}.vcf",
             caller=config["caller"]
         ),
         # expand(

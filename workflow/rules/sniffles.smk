@@ -15,7 +15,7 @@ rule call_sv_sniffles:
         "logs/{sample}/call_sv_sniffles.log",
     shell:
         """
-        sniffles \\
+        {{ sniffles \\
         --input {input.bam} \\
         --vcf {output.vcf} \\
         --sample-id {wildcards.sample} \\
@@ -27,6 +27,8 @@ rule call_sv_sniffles:
         --minsvlen {params.min_length_sv} \\
         --min-alignment-length {params.min_length_reads} \\
         --output-rnames \\
-        --allow-overwrite \\
+        --allow-overwrite
+
+        echo -e "[INFO] Sniffles is done!"; }} \\
         1> {log} 2>&1
         """

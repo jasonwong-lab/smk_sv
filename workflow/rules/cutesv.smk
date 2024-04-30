@@ -15,7 +15,7 @@ rule call_sv_cutesv:
         "logs/{sample}/call_sv_cutesv.log",
     shell:
         """
-        cuteSV \\
+        {{ cuteSV \\
         {input.bam} {input.fasta} {output.vcf} {output.dir_out} \\
         --sample {wildcards.sample} \\
         --threads {threads} \\
@@ -29,6 +29,8 @@ rule call_sv_cutesv:
         --min_size {params.min_length_sv} \\
         --max_size -1 \\
         --genotype \\
-        --report_readid \\
+        --report_readid
+
+        echo -e "[INFO] cuteSV is done!"; }} \\
         1> {log} 2>&1
         """

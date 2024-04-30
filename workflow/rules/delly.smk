@@ -18,8 +18,11 @@ rule call_sv_delly:
         -g {input.fasta} \\
         -q {params.min_quality_mapping} \\
         {input.bam}
+
         BAM={input.bam}
         echo -e "$(basename ${{BAM%.*}})\\t{wildcards.sample}" > {output.tab_rename}
-        bcftools view -O v {output.bcf} | bcftools reheader -s {output.tab_rename} > {output.vcf}; }} \\
+        bcftools view -O v {output.bcf} | bcftools reheader -s {output.tab_rename} > {output.vcf}
+
+        echo -e "[INFO] delly is done!"; }} \\
         1> {log} 2>&1
         """

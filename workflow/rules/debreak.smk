@@ -29,8 +29,11 @@ rule call_sv_debreak:
         --poa \\
         --tumor \\
         --ref {input.fasta}
+
         mv {output.vcf} {output.vcf_tmp}
         echo -e "{input.bam}\\t{wildcards.sample}" > {output.tab_rename}
-        bcftools reheader -s {output.tab_rename} {output.vcf_tmp} > {output.vcf}; }} \\
+        bcftools reheader -s {output.tab_rename} {output.vcf_tmp} > {output.vcf}
+
+        echo -e "[INFO] debreak is done!"; }} \\
         1> {log} 2>&1
         """

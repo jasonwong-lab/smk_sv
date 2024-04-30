@@ -27,6 +27,9 @@ rule map_minimap2:
         {input.index_minimap2} {params.dir_data}/{wildcards.sample}.{params.suffix_fastq} \\
             | samtools view -Sb -@ {threads} - \\
             | samtools sort -@ {threads} -o {output.bam} -
-        samtools index -@ {threads} {output.bam}; }} \\
+
+        samtools index -@ {threads} {output.bam}
+
+        echo -e "[INFO] minimap2 is done!"; }} \\
         1> {log} 2>&1
         """

@@ -34,11 +34,17 @@ rule call_sv_svision:
             -c ${{chr}}
             sleep 10
         done
+
         vcf_svision_chr1={output.dir_out}/{wildcards.sample}.chr1.svision.s{params.min_num_reads}.graph.vcf
         {{ grep '^#' ${{vcf_svision_chr1}}; cat {output.dir_out}/{wildcards.sample}.*.vcf | grep -v '^#'; }} \\
             | awk '/^##INFO=<ID=GFA_L/ && !f {{print "##INFO=<ID=GFA_ID,Number=.,Type=String,Description=\\"GFA_ID\\">"; f=1}} 1' \\
             | awk 'BEGIN{{FS=OFS="\\t"}} /^#/ || $5 == "<CSV>" {{print; next}} {{split($8, a, ";"); for(i in a) {{if(a[i] ~ /^SVTYPE=/) {{split(a[i], b, "="); if(b[2] == "tDUP") b[2] = "DUP:TANDEM"; gsub("<SV>", "<"b[2]">", $5)}}}}}}1' \\
             | awk '/^##ALT/ && !f {{print "##ALT=<ID=INS,Description=\\"INS\\">\\n##ALT=<ID=INV,Description=\\"INV\\">\\n##ALT=<ID=DUP,Description=\\"DUP\\">\\n##ALT=<ID=DUP:TANDEM,Description=\\"DUP:TANDEM\\">\\n##ALT=<ID=DEL,Description=\\"DEL\\">"; f=1}} 1' \\
-            > {output.vcf}; }} \\
+            > {output.vcf}
+
+        mkdir {output.dir_out}/chrs
+        mv {output.dir_out}/*chr*.vcf {output.dir_out}/*chr*.txt {output.dir_out}/*.log {output.dir_out}/chrs/
+
+        echo -e "[INFO] SVision is done!"; }} \\
         1> {log} 2>&1
         """

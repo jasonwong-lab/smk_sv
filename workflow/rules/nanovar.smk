@@ -29,7 +29,10 @@ rule call_sv_nanovar:
         --homo 0.75 \\
         --hetero 0.1 \\
         {input.bam} {input.fasta} {output.dir_out}
+
         echo -e "$(basename ${{BAM%.*}})\\t{wildcards.sample}" > {output.tab_rename}
-        bcftools reheader -s {output.tab_rename} {output.dir_out}/"$(basename ${{BAM%.*}})".nanovar.pass.vcf > {output.vcf}; }} \\
+        bcftools reheader -s {output.tab_rename} {output.dir_out}/"$(basename ${{BAM%.*}})".nanovar.pass.vcf > {output.vcf}
+
+        echo -e "[INFO] nanovar is done!"; }} \\
         1> {log} 2>&1
         """

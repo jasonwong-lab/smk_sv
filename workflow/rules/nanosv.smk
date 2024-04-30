@@ -13,9 +13,12 @@ rule call_sv_nanosv:
     shell:
         """
         {{ NanoSV -t {threads} -s samtools -c {input.config_nanosv} -b {input.bed_nanosv} -o {output.vcf} {input.bam}
+
         mv {output.vcf} {output.vcf_tmp}
         BAM={input.bam}
         echo -e "${{BAM%%.*}}\\t{wildcards.sample}" > {output.tab_rename}
-        bcftools reheader -s {output.tab_rename} {output.vcf_tmp} > {output.vcf}; }} \\
+        bcftools reheader -s {output.tab_rename} {output.vcf_tmp} > {output.vcf}
+
+        echo -e "[INFO] NanoSV is done!"; }} \\
         1> {log} 2>&1
         """
