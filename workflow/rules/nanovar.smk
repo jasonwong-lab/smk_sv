@@ -1,6 +1,6 @@
 rule call_sv_nanovar:
     input:
-        bam="minimap2/{sample}/{sample}.sorted.bam",
+        bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],
     output:
         dir_out=directory("nanovar/{sample}/"),

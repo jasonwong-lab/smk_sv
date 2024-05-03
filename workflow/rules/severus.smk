@@ -1,12 +1,13 @@
 rule phasenhaplotag_bam_clair3:
     input:
-        bam="minimap2/{sample}/{sample}.sorted.bam",
+        bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],
         model_clair3=config["model_clair3"],
     output:
         dir_out=directory("clair3/{sample}"),
         vcf_phased=protected("clair3/{sample}/phased_merge_output.vcf.gz"),
         bam_haplotagged=protected("minimap2/{sample}/{sample}.sorted.haplotagged.bam"),
+        bai_haplotagged=protected("minimap2/{sample}/{sample}.sorted.haplotagged.bam.bai"),
     threads: config["threads"]
     log:
         "logs/{sample}/phasenhaplotag_bam_clair3.log",
@@ -24,7 +25,8 @@ rule phasenhaplotag_bam_clair3:
         --output={output.dir_out}
 
         mv {output.dir_out}/phased_output.bam {output.bam_haplotagged}
-        samtools index -@ {threads} {output.bam_haplotagged}
+        mv {output.dir_out}/pahsed_output.bam.bai {output.bai_haplotagged}
+        # samtools index -@ {threads} {output.bam_haplotagged}
 
         echo -e "[INFO] Clair3 is done!"; }} \\
         1> {log} 2>&1
@@ -33,8 +35,8 @@ rule phasenhaplotag_bam_clair3:
 
 rule call_sv_severus:
     input:
-        bam_haplotagged="minimap2/{sample}/{sample}.sorted.haplotagged.bam",
-        vcf_phased="clair3/{sample}/phased_merge_output.vcf.gz",
+        bam_haplotagged=ancient("minimap2/{sample}/{sample}.sorted.haplotagged.bam"),
+        vcf_phased=ancient("clair3/{sample}/phased_merge_output.vcf.gz"),
         fasta=config["fasta"],
         bed_nvtr=config["bed_nvtr"],
     output:

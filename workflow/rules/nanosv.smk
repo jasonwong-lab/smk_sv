@@ -1,6 +1,6 @@
 rule call_sv_nanosv:
     input:
-        bam="minimap2/{sample}/{sample}.sorted.bam",
+        bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         bed_nanosv=config["bed_nanosv"],
         config_nanosv=config["config_nanosv"],
     output:

@@ -1,6 +1,6 @@
 rule call_sv_cutesv:
     input:
-        bam="minimap2/{sample}/{sample}.sorted.bam",
+        bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],
     output:
         vcf=protected("cutesv/{sample}/cutesv.vcf"),

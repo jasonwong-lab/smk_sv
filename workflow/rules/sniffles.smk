@@ -1,6 +1,6 @@
 rule call_sv_sniffles:
     input:
-        bam="minimap2/{sample}/{sample}.sorted.bam",
+        bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],
         bed_tandem_repeats=config["bed_tandem_repeats"],
     output:

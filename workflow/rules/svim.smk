@@ -1,10 +1,11 @@
 rule call_sv_svim:
     input:
-        bam="minimap2/{sample}/{sample}.sorted.bam",
+        bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],
     output:
-        dir_out=protected(directory("svim/{sample}/")),
-        vcf=protected("svim/{sample}/svim.vcf"),
+        dir_out=directory("svim/{sample}/"),
+        vcf_origin=protected("svim/{sample}/variants.vcf"),
+        vcf="svim/{sample}/svim.vcf",
     params:
         min_num_reads=config["min_num_reads"],
         min_quality_mapping=config["min_quality_mapping"],

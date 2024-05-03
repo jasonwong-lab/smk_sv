@@ -28,7 +28,8 @@ workdir: config["dir_run"]
 rule all:
     input:
         vcf=expand(
-            "{caller}/XWL/{caller}.vcf",
+            "{caller}/{sample}/{caller}.vcf",
+            sample=pep.sample_table["sample_name"],
             caller=config["caller"]
         ),
         # expand(
