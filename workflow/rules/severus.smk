@@ -25,7 +25,7 @@ rule phasenhaplotag_bam_clair3:
         --output={output.dir_out}
 
         mv {output.dir_out}/phased_output.bam {output.bam_haplotagged}
-        mv {output.dir_out}/pahsed_output.bam.bai {output.bai_haplotagged}
+        mv {output.dir_out}/phased_output.bam.bai {output.bai_haplotagged}
         # samtools index -@ {threads} {output.bam_haplotagged}
 
         echo -e "[INFO] Clair3 is done!"; }} \\
