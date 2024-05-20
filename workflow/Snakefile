@@ -28,15 +28,10 @@ workdir: config["dir_run"]
 rule all:
     input:
         vcf=expand(
-            "{caller}/{sample}/{caller}.vcf",
+            "{caller}/{sample}/{caller}.duphold.filtered.vcf",
             sample=pep.sample_table["sample_name"],
-            caller=config["caller"]
+            caller=["cutesv", "sniffles", "svim", "severus", "svision"],
         ),
-        # expand(
-        #     "survivor/{sample}/final/{sample}.{type_sv}.merged.vcf",
-        #     sample=pep.sample_table["sample_name"],
-        #     type_sv=config["type_sv"],
-        # ),
 
 
 # *--------------------------------------------------------------------------* #
@@ -47,71 +42,73 @@ if config["map_fastq"]:
     include: "rules/minimap2.smk"
 
 
-if "cutesv" in config["caller"]:
+if config["caller"] is not None and "cutesv" in config["caller"]:
 
     include: "rules/cutesv.smk"
 
 
-if "sniffles" in config["caller"]:
+if config["caller"] is not None and "sniffles" in config["caller"]:
 
     include: "rules/sniffles.smk"
 
 
-if "svim" in config["caller"]:
+if config["caller"] is not None and "svim" in config["caller"]:
 
     include: "rules/svim.smk"
 
 
-if "severus" in config["caller"]:
+if config["caller"] is not None and "severus" in config["caller"]:
 
     include: "rules/severus.smk"
 
 
-if "svision" in config["caller"]:
+if config["caller"] is not None and "svision" in config["caller"]:
 
     include: "rules/svision.smk"
 
 
-if "debreak" in config["caller"]:
+if config["caller"] is not None and "debreak" in config["caller"]:
 
     include: "rules/debreak.smk"
 
 
-if "delly" in config["caller"]:
+if config["caller"] is not None and "delly" in config["caller"]:
 
     include: "rules/delly.smk"
 
 
-if "nanosv" in config["caller"]:
+if config["caller"] is not None and "nanosv" in config["caller"]:
 
     include: "rules/nanosv.smk"
 
 
-if "nanovar" in config["caller"]:
+if config["caller"] is not None and "nanovar" in config["caller"]:
 
     include: "rules/nanovar.smk"
 
 
-# rule filter_sv:
-#     input:
-#         vcf="{caller}/{sample}/{caller}.vcf",
-#         bam="minimap2/{sample}/{sample}.sorted.bam",
-#         fasta=config["fasta"],
-#     output:
-#         vcf_filtered=temp("{caller}/{sample}/{caller}.filtered.vcf"),
-#         vcf_duphold=temp("{caller}/{sample}/{caller}.filtered.duphold.vcf"),
-#         vcf_duphold_filtered="{caller}/{sample}/{caller}.duphold.filtered.vcf",
-#     params:
-#         min_num_reads=config["min_num_reads"],
-#         min_length_sv=config["min_length_sv"],
-#         min_coverage=config["min_coverage"],
-#     threads: config["threads"]
-#     log:
-#         "logs/{sample}/filter_sv.{caller}.log",
-#     script:
-#         scripts/filter_sv.sh
-#
-#
+rule filter_sv:
+    input:
+        vcf="{caller}/{sample}/{caller}.vcf",
+        bam="minimap2/{sample}/{sample}.sorted.bam",
+        fasta=config["fasta"],
+    output:
+        vcf_filtered=temp("{caller}/{sample}/{caller}.filtered.vcf"),
+        vcf_duphold=temp("{caller}/{sample}/{caller}.filtered.duphold.vcf"),
+        vcf_duphold_filtered="{caller}/{sample}/{caller}.duphold.filtered.vcf",
+    params:
+        min_num_reads=config["min_num_reads"],
+        min_length_sv=config["min_length_sv"],
+        min_coverage=config["min_coverage"],
+        min_dhffc=config["min_dhffc"],
+        max_dhbfc=config["max_dhbfc"],
+    threads: config["threads"]
+    log:
+        "logs/{sample}/filter_sv.{caller}.log",
+    script:
+        "scripts/filter_sv.sh"
+
+
 # rule split_vcf:
 #     input:
 #         vcf_filtered="{caller}/{sample}/{caller}.duphold.filtered.vcf",
@@ -179,8 +176,6 @@ if "nanovar" in config["caller"]:
 #         "logs/{sample}/filter_sv_further.{caller}.{type_sv}.log",
 #     script:
 #         scripts/filter_sv_further.sh
-
-
 # rule merge_sv_survivor:
 #     input:
 #         vcf_cutesv="cutesv/{sample}/cutesv.{type_sv}.vcf",

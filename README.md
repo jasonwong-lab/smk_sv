@@ -44,7 +44,7 @@ Minghao Jiang, <jiang01@icloud.com>
 
    *Note: You must change the file paths specified in the config.*
 
-6. **Modify the column `sample_name` of `../config/pep/sample_info.csv`.**
+6. **Modify the column `sample_name` of `../config/pep/samples.csv`.**
 
    *Note: Only `sample_name` in the table will be used.*
 

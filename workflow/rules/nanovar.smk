@@ -3,10 +3,10 @@ rule call_sv_nanovar:
         bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],
     output:
-        dir_out=directory("nanovar/{sample}/"),
         vcf=protected("nanovar/{sample}/nanovar.vcf"),
         tab_rename=temp("nanovar/{sample}/rename.tab"),
     params:
+        dir_out=directory("nanovar/{sample}"),
         genome=config["genome"],
         min_num_reads=config["min_num_reads"],
         min_length_reads=config["min_length_reads"],
@@ -28,10 +28,10 @@ rule call_sv_nanovar:
         --minlen {params.min_length_sv} \\
         --homo 0.75 \\
         --hetero 0.1 \\
-        {input.bam} {input.fasta} {output.dir_out}
+        {input.bam} {input.fasta} {params.dir_out}
 
         echo -e "$(basename ${{BAM%.*}})\\t{wildcards.sample}" > {output.tab_rename}
-        bcftools reheader -s {output.tab_rename} {output.dir_out}/"$(basename ${{BAM%.*}})".nanovar.pass.vcf > {output.vcf}
+        bcftools reheader -s {output.tab_rename} {params.dir_out}/"$(basename ${{BAM%.*}})".nanovar.pass.vcf > {output.vcf}
 
         echo -e "[INFO] nanovar is done!"; }} \\
         1> {log} 2>&1

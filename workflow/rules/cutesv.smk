@@ -4,8 +4,8 @@ rule call_sv_cutesv:
         fasta=config["fasta"],
     output:
         vcf=protected("cutesv/{sample}/cutesv.vcf"),
-        dir_out=directory("cutesv/{sample}"),
     params:
+        dir_out=directory("cutesv/{sample}"),
         min_length_reads=config["min_length_reads"],
         min_num_reads=config["min_num_reads"],
         min_quality_mapping=config["min_quality_mapping"],
@@ -16,7 +16,7 @@ rule call_sv_cutesv:
     shell:
         """
         {{ cuteSV \\
-        {input.bam} {input.fasta} {output.vcf} {output.dir_out} \\
+        {input.bam} {input.fasta} {output.vcf} {params.dir_out} \\
         --sample {wildcards.sample} \\
         --threads {threads} \\
         --max_cluster_bias_INS 100 \\

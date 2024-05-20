@@ -4,10 +4,13 @@ rule phasenhaplotag_bam_clair3:
         fasta=config["fasta"],
         model_clair3=config["model_clair3"],
     output:
-        dir_out=directory("clair3/{sample}"),
         vcf_phased=protected("clair3/{sample}/phased_merge_output.vcf.gz"),
         bam_haplotagged=protected("minimap2/{sample}/{sample}.sorted.haplotagged.bam"),
-        bai_haplotagged=protected("minimap2/{sample}/{sample}.sorted.haplotagged.bam.bai"),
+        bai_haplotagged=protected(
+            "minimap2/{sample}/{sample}.sorted.haplotagged.bam.bai"
+        ),
+    params:
+        dir_out=directory("clair3/{sample}"),
     threads: config["threads"]
     log:
         "logs/{sample}/phasenhaplotag_bam_clair3.log",
@@ -22,10 +25,10 @@ rule phasenhaplotag_bam_clair3:
         --threads={threads} \\
         --platform=ont \\
         --model_path={input.model_clair3} \\
-        --output={output.dir_out}
+        --output={params.dir_out}
 
-        mv {output.dir_out}/phased_output.bam {output.bam_haplotagged}
-        mv {output.dir_out}/phased_output.bam.bai {output.bai_haplotagged}
+        mv {params.dir_out}/phased_output.bam {output.bam_haplotagged}
+        mv {params.dir_out}/phased_output.bam.bai {output.bai_haplotagged}
         # samtools index -@ {threads} {output.bam_haplotagged}
 
         echo -e "[INFO] Clair3 is done!"; }} \\
@@ -40,10 +43,10 @@ rule call_sv_severus:
         fasta=config["fasta"],
         bed_nvtr=config["bed_nvtr"],
     output:
-        dir_out=directory("severus/{sample}"),
         vcf=protected("severus/{sample}/severus.vcf"),
         tab_rename=temp("severus/{sample}/rename.tab"),
     params:
+        dir_out=directory("severus/{sample}"),
         min_num_reads=config["min_num_reads"],
         min_quality_mapping=config["min_quality_mapping"],
         min_length_sv=config["min_length_sv"],
@@ -55,7 +58,7 @@ rule call_sv_severus:
         {{ echo -e "{wildcards.sample}.sorted.haplotagged\\t{wildcards.sample}" > {output.tab_rename}
         severus \\
         --target-bam {input.bam_haplotagged} \\
-        --out-dir {output.dir_out} \\
+        --out-dir {params.dir_out} \\
         -t {threads} \\
         --min-mapq {params.min_quality_mapping} \\
         --min-support {params.min_num_reads} \\
@@ -65,7 +68,7 @@ rule call_sv_severus:
         --phasing-vcf {input.vcf_phased} \\
         --vntr-bed {input.bed_nvtr}
 
-        awk '/^##FILTER/ && !f {{print "##FILTER=<ID=FAIL_LONG,Description=\\"FAIL_LONG\\">\\n##FILTER=<ID=FAIL,Description=\\"FAIL\\">"; f=1}} 1' {output.dir_out}/all_SVs/severus_all.vcf \\
+        awk '/^##FILTER/ && !f {{print "##FILTER=<ID=FAIL_LONG,Description=\\"FAIL_LONG\\">\\n##FILTER=<ID=FAIL,Description=\\"FAIL\\">"; f=1}} 1' {params.dir_out}/all_SVs/severus_all.vcf \\
             | awk -F'\\t' -v OFS="\\t" '$3 ~ /.*BND.*/ {{gsub(/END=[0-9]+;/, ""); print $0; next}} {{print $0}}' \\
             | bcftools reheader -s {output.tab_rename} \\
             > {output.vcf}

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # shellcheck disable=SC2154
 
 vcf="${snakemake_input[vcf]}"
@@ -56,5 +56,5 @@ function split_vcf() {
 }
 
 
-split_vcf ${vcf} ${type_sv} ${caller} 1> {log} 2>&1
+split_vcf ${vcf} ${type_sv} ${caller} 1> ${log} 2>&1
 
