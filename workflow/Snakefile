@@ -30,7 +30,7 @@ rule all:
         vcf_snpeff=expand(
             "{caller}/{sample}/{caller}.{type_sv}.snpeff.vcf",
             sample="XWL",
-            caller=["cutesv"],
+            caller=["cutesv", "sniffles", "svim", "severus", "svision"],
             type_sv=config["type_sv"]
         ),
 

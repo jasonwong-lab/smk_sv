@@ -1,9 +1,52 @@
-# Snakemake pipeline to call structural variants from ONT data
+# A snakemake pipeline to call structural variants from ONT data
 
 ## Author
+
 Minghao Jiang, <jiang01@icloud.com>
 
+## Supported tools
+
+- SV callers
+   - [cuteSV](https://github.com/tjiangHIT/cuteSV)
+   - [Sniffles](https://github.com/fritzsedlazeck/Sniffles)
+   - [SVIM](https://github.com/eldariont/svim)
+   - [SVision](https://github.com/xjtu-omics/SVision)
+   - [Severus](https://github.com/KolmogorovLab/Severus)
+   - [NanoSV](https://github.com/mroosmalen/nanosv)
+   - [NanoVar](https://github.com/cytham/nanovar)
+   - [Delly](https://github.com/dellytools/delly)
+   - [Debreak](https://github.com/Maggi-Chen/DeBreak)
+- Annotation tools
+   - [AnnotSV](https://github.com/lgmgeo/AnnotSV)
+   - [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html)
+   - [SnpEff](http://pcingola.github.io/SnpEff/)
+
+## Pipeline structure
+
+```mermaid
+---
+title: SV calling workflow
+---
+flowchart TD
+		fastq([FASTQ]) -- minimap2 --> bam([BAM])
+		bam([BAM]) -- cuteSV --> cutesv_vcf([VCF])
+		bam([BAM]) -- Sniffles2 --> sniffles2_vcf([VCF])
+		bam([BAM]) -- SVIM --> svim_vcf([VCF])
+		cutesv_vcf([VCF]) -- bcftools --> cutesv_filtered_vcf([filtered VCF])
+		sniffles2_vcf([VCF]) -- bcftools --> sniffles2_filtered_vcf([filtered VCF])
+		svim_vcf([VCF]) -- bcftools --> svim_filtered_vcf([filtered VCF])
+		cutesv_filtered_vcf([filtered VCF]) -- SURVIVOR --> merged_vcf([merged VCF])
+		sniffles2_filtered_vcf([filtered VCF]) -- SURVIVOR --> merged_vcf([merged VCF])
+		svim_filtered_vcf([filtered VCF]) -- SURVIVOR --> merged_vcf([merged VCF])
+		merged_vcf([merged VCF]) -- VEP, AnnotSV, and SnpEff --> annotated_vcf([annotated VCF])
+		annotated_vcf([annotated VCF]) -.-> somatic_vcf([somatic SVs])
+		annotated_vcf([annotated VCF]) -.-> germline_vcf([germline SVs])
+		fastq:::myclass; bam:::myclass; cutesv_vcf:::myclass; sniffles2_vcf:::myclass; svim_vcf:::myclass; cutesv_filtered_vcf:::myclass; sniffles2_filtered_vcf:::myclass; svim_filtered_vcf:::myclass; merged_vcf:::myclass; annotated_vcf:::myclass; somatic_vcf:::myclass; germline_vcf:::myclass
+		classDef myclass fill: #A1DD70, stroke:#EE4E4E
+```
+
 ## Usage
+
 1. **Ensure you have clonned this repo and navigated to the directory `workflow`.**
 
    *Note: All steps below should be followed after you are in the `workflow` dir.*
@@ -79,3 +122,6 @@ Minghao Jiang, <jiang01@icloud.com>
 
    You can refer to the profile I have been using at `profiles/mycluster`, or turn to snakemake websites.
 
+## License
+
+Codes here are licensed under the [GNU General Public License v3](http://www.gnu.org/licenses/gpl-3.0.html).
