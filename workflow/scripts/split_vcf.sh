@@ -1,7 +1,7 @@
 #!/bin/bash
 # shellcheck disable=SC2154
 
-vcf="${snakemake_input[vcf]}"
+vcf_filtered="${snakemake_input[vcf_filtered]}"
 vcf_splitted="${snakemake_output[vcf_splitted]}"
 
 log="${snakemake_log[0]}"
@@ -56,5 +56,4 @@ function split_vcf() {
 }
 
 
-split_vcf ${vcf} ${type_sv} ${caller} 1> ${log} 2>&1
-
+split_vcf "${vcf_filtered}" "${type_sv}" "${caller}" 1> "${log}" 2>&1

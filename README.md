@@ -38,6 +38,8 @@ Minghao Jiang, <jiang01@icloud.com>
 
    *They are included in the image now. However, the image size would be larger (~ 9GB).*
 
+   *Note: When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv`. Don't forget to make `vep` executable in your environment.*
+
 4. **You should install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself**, as it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
 
 5. **Modify the `../config/config.yaml`** to specify needed file paths.

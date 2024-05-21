@@ -102,7 +102,8 @@ ln -s /opt/miniconda3/envs/clair3/bin/run_clair3.sh /opt/bin/run_clair3.sh && \
 ln -s /opt/miniconda3/envs/clair3/bin/scripts /opt/bin/scripts && \
 ln -s /opt/miniconda3/envs/severus/bin/severus /opt/bin/severus && \
 sed -i '1s/.*/\#\!\/opt\/miniconda3\/envs\/debreak\/bin\/python3/' /opt/bin/debreak && \
-sed -i '3c\SCRIPT_PATH=$(dirname $(/bin/readlink -f "$0"))' /opt/bin/run_clair3.sh
+sed -i '3c\SCRIPT_PATH=$(dirname $(/bin/readlink -f "$0"))' /opt/bin/run_clair3.sh && \
+echo 'export PERL5LIB=/etc/perl:/usr/local/lib/x86_64-linux-gnu/perl/5.26.1:/usr/local/share/perl/5.26.1:/usr/lib/x86_64-linux-gnu/perl5/5.26:/usr/share/perl5:/usr/lib/x86_64-linux-gnu/perl/5.26:/usr/share/perl/5.26:/usr/local/lib/site_perl:/usr/lib/x86_64-linux-gnu/perl-base:/opt/miniconda3/envs/clair3/lib/perl5/5.32/site_perl:/opt/miniconda3/envs/clair3/lib/perl5/site_perl:/opt/miniconda3/envs/clair3/lib/perl5/5.32/vendor_perl:/opt/miniconda3/envs/clair3/lib/perl5/vendor_perl:/opt/miniconda3/envs/clair3/lib/perl5/5.32/core_perl:/opt/miniconda3/envs/clair3/lib/perl5/core_perl:${PERL5LIB}' >> ~/.bashrc
 
 PATH=/opt/miniconda3/envs/clair3/bin:${PATH}
 

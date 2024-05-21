@@ -27,10 +27,11 @@ workdir: config["dir_run"]
 # *--------------------------------------------------------------------------* #
 rule all:
     input:
-        vcf=expand(
-            "{caller}/{sample}/{caller}.duphold.filtered.vcf",
-            sample=pep.sample_table["sample_name"],
-            caller=["cutesv", "sniffles", "svim", "severus", "svision"],
+        vcf_snpeff=expand(
+            "{caller}/{sample}/{caller}.{type_sv}.snpeff.vcf",
+            sample="XWL",
+            caller=["cutesv"],
+            type_sv=config["type_sv"]
         ),
 
 
@@ -109,37 +110,39 @@ rule filter_sv:
         "scripts/filter_sv.sh"
 
 
-# rule split_vcf:
-#     input:
-#         vcf_filtered="{caller}/{sample}/{caller}.duphold.filtered.vcf",
-#     output:
-#         vcf_splitted="{caller}/{sample}/{caller}.{type_sv}.vcf",
-#     log:
-#         "logs/{sample}/split_vcf.{caller}.{type_sv}.log",
-#     script:
-#         scripts/split_vcf.sh
-#
-#
-# rule annotate_sv:
-#     input:
-#         vcf="{caller}/{sample}/{caller}.{type_sv}.vcf",
-#         fasta=config["fasta"],
-#         dir_db_snpeff=config["dir_db_snpeff"],
-#         dir_db_vep=config["dir_db_vep"],
-#     output:
-#         vcf_snpeff=protected("{caller}/{sample}/{caller}.{type_sv}.snpeff.vcf"),
-#         vcf_vep=protected("{caller}/{sample}/{caller}.{type_sv}.snpeff.vep.vcf"),
-#     params:
-#         genome=config["genome"],
-#         version_cache_snpeff=config["version_cache_snpeff"],
-#         version_cache_vep=config["version_cache_vep"],
-#     threads: config["threads"]
-#     log:
-#         "logs/{sample}/annotate_sv.{caller}.{type_sv}.log",
-#     script:
-#         scripts/annotate_sv.sh
-#
-#
+rule split_vcf:
+    input:
+        vcf_filtered="{caller}/{sample}/{caller}.duphold.filtered.vcf",
+    output:
+        vcf_splitted="{caller}/{sample}/{caller}.{type_sv}.vcf",
+    log:
+        "logs/{sample}/split_vcf.{caller}.{type_sv}.log",
+    script:
+        "scripts/split_vcf.sh"
+
+
+rule annotate_sv:
+    input:
+        vcf="{caller}/{sample}/{caller}.{type_sv}.vcf",
+        fasta=config["fasta"],
+        dir_db_snpeff=config["dir_db_snpeff"],
+        dir_db_vep=config["dir_db_vep"],
+    output:
+        vcf_snpeff=protected("{caller}/{sample}/{caller}.{type_sv}.snpeff.vcf"),
+        vcf_vep=protected("{caller}/{sample}/{caller}.{type_sv}.snpeff.vep.vcf"),
+    params:
+        genome=config["genome"],
+        version_cache_snpeff=config["version_cache_snpeff"],
+        version_cache_vep=config["version_cache_vep"],
+    container:
+        None
+    threads: config["threads"]
+    log:
+        "logs/{sample}/annotate_sv.{caller}.{type_sv}.log",
+    script:
+        "scripts/annotate_sv.sh"
+
+
 # rule annotate_sv_annotsv:
 #     input:
 #         vcf="{caller}/{sample}/{caller}.{type_sv}.vcf",

@@ -52,7 +52,8 @@ EOF
     [ -f "${vcf_snpeff}" ] && l_output_s=$(wc -l "${vcf_snpeff}" | awk '{print $1}')
     [ -f "${vcf_vep}" ] && l_output_v=$(wc -l "${vcf_vep}" | awk '{print $1}')
     local size_max=300
-    local size_input=$(du -m "${vcf}" | cut -f1)
+    local size_input
+    size_input=$(du -m "${vcf}" | cut -f1)
 
     if [ "${l_input}" -ne $((l_output_s - 5)) ]; then
         local input_snpeff
@@ -63,7 +64,7 @@ EOF
         elif [ "${t}" == "svision" ] && [ "${v}" != "INS" ]; then
             awk -v var="$v" 'BEGIN {OFS=FS="\t"} !/^#/ {$5 = "<"var">"} 1' "${input_snpeff}" > "${input_snpeff%.*}".5.vcf
             input_snpeff="${input_snpeff%.*}".5.vcf
-        elif [ "${t}" == "debreak" ] && [ "${v}" == "DEL" ] && [ ${size_input} -ge ${size_max} ]; then
+        elif [ "${t}" == "debreak" ] && [ "${v}" == "DEL" ] && [ "${size_input}" -ge ${size_max} ]; then
             awk 'BEGIN {OFS=FS="\t"} !/^#/ {$4 = "N"; $5 = "<DEL>"} 1' "${input_snpeff}" > "${input_snpeff%.*}".4_5.vcf
             input_snpeff="${input_snpeff%.*}".4_5.vcf
         fi
@@ -78,7 +79,7 @@ EOF
         if [ "${t}" == "svision" ] && [ "${v}" == "INS" ] ; then
             awk 'BEGIN {FS=OFS="\t"} $5 == "N" {$5 = "<INS>"} 1' "${input_vep}" > "${input_vep%.*}".5.vcf
             input_vep="${input_vep%.*}".5.vcf
-        elif [ "${t}" == "cutesv" ] && [ "${v}" == "DEL" ] && [ ${size_input} -ge ${size_max} ]; then
+        elif [ "${t}" == "cutesv" ] && [ "${v}" == "DEL" ] && [ "${size_input}" -ge ${size_max} ]; then
             awk 'BEGIN {OFS=FS="\t"} !/^#/ {$4 = "N"; $5 = "<DEL>"} 1' "${input_vep}" > "${input_vep%.*}".4_5.vcf
             input_vep="${input_vep%.*}".4_5.vcf
         fi
@@ -94,5 +95,4 @@ EOF
 }
 
 
-annotate_sv ${vcf} ${type_sv} ${caller} ${genome} ${version_cache_snpeff} ${version_cache_vep}
-
+annotate_sv "${vcf}" "${type_sv}" "${caller}" "${genome}" "${version_cache_snpeff}" "${version_cache_vep}" 1> "${log}" 2>&1
