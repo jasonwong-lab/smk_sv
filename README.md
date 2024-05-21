@@ -24,26 +24,43 @@ Minghao Jiang, <jiang01@icloud.com>
 ## Pipeline structure
 
 ```mermaid
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'fontFamily': 'Comic Sans MS',
+      'primaryColor': '#F4CE14',
+      'primaryTextColor': '#FFFFFF',
+      'lineColor': '#EE6983',
+      'secondaryColor': '#00B8A9',
+      'tertiaryColor': '#FFFFFF'
+    }
+  }
+}%%
+
 ---
 title: SV calling workflow
 ---
+
 flowchart TD
-		fastq([FASTQ]) -- minimap2 --> bam([BAM])
-		bam([BAM]) -- cuteSV --> cutesv_vcf([VCF])
-		bam([BAM]) -- Sniffles2 --> sniffles2_vcf([VCF])
-		bam([BAM]) -- SVIM --> svim_vcf([VCF])
-		cutesv_vcf([VCF]) -- bcftools --> cutesv_filtered_vcf([filtered VCF])
-		sniffles2_vcf([VCF]) -- bcftools --> sniffles2_filtered_vcf([filtered VCF])
-		svim_vcf([VCF]) -- bcftools --> svim_filtered_vcf([filtered VCF])
-		cutesv_filtered_vcf([filtered VCF]) -- SURVIVOR --> merged_vcf([merged VCF])
-		sniffles2_filtered_vcf([filtered VCF]) -- SURVIVOR --> merged_vcf([merged VCF])
-		svim_filtered_vcf([filtered VCF]) -- SURVIVOR --> merged_vcf([merged VCF])
-		merged_vcf([merged VCF]) -- VEP, AnnotSV, and SnpEff --> annotated_vcf([annotated VCF])
-		annotated_vcf([annotated VCF]) -.-> somatic_vcf([somatic SVs])
-		annotated_vcf([annotated VCF]) -.-> germline_vcf([germline SVs])
-		fastq:::myclass; bam:::myclass; cutesv_vcf:::myclass; sniffles2_vcf:::myclass; svim_vcf:::myclass; cutesv_filtered_vcf:::myclass; sniffles2_filtered_vcf:::myclass; svim_filtered_vcf:::myclass; merged_vcf:::myclass; annotated_vcf:::myclass; somatic_vcf:::myclass; germline_vcf:::myclass
-		classDef myclass fill: #A1DD70, stroke:#EE4E4E
+  fastq([FASTQ]) -- Minimap2 --> bam([BAM])
+  bam([BAM]) -- cuteSV --> cutesv_vcf([VCF])
+  bam([BAM]) -- Sniffles2 --> sniffles2_vcf([VCF])
+  bam([BAM]) -- SVIM --> svim_vcf([VCF])
+  cutesv_vcf([VCF]) -- BCFtools --> cutesv_filtered_vcf([filtered VCF])
+  sniffles2_vcf([VCF]) -- BCFtools --> sniffles2_filtered_vcf([filtered VCF])
+  svim_vcf([VCF]) -- BCFtools --> svim_filtered_vcf([filtered VCF])
+  cutesv_filtered_vcf([filtered VCF]) --- survivor["SURVIVOR"]
+  sniffles2_filtered_vcf([filtered VCF]) --- survivor["SURVIVOR"]
+  svim_filtered_vcf([filtered VCF]) --- survivor["SURVIVOR"]
+  survivor["SURVIVOR"] --> merged_vcf([merged VCF])
+  merged_vcf([merged VCF]) -- VEP, AnnotSV, and SnpEff --> annotated_vcf([annotated VCF/TSV])
+  annotated_vcf([annotated VCF/TSV]) -.-> somatic_vcf([somatic SVs])
+  annotated_vcf([annotated VCF/TSV]) -.-> germline_vcf([germline SVs])
+  survivor:::myclass
+  classDef myclass fill:#00B8A9, stroke-width:0px, padding:0px, margin:0px
 ```
+
 
 ## Usage
 
