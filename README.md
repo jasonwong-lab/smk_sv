@@ -45,7 +45,7 @@ title: SV calling workflow
 flowchart TD
 
   classDef myclass fill:#00B8A9, stroke-width:0px, padding:0px, margin:0px;
-  classDef myclass2 fill:#A5DD9B;
+  classDef myclass2 fill:#A5DD9B, stroke-dasharray:5 5;
 
   fastq([FASTQ]) -- Minimap2 --> bam([BAM])
   bam([BAM]) -- cuteSV --> cutesv_vcf([VCF])
