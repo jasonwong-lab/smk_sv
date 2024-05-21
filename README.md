@@ -62,7 +62,7 @@ flowchart TD
   bam([BAM]) -. "other callers (e.g. SVIM)" .-> other_vcfs([VCFs])
   other_vcfs([VCFs]) -. BCFtools .-> other_filtered_vcf([filtered VCFs])
 
-  other_filtered_vcf([filtered VCFs]) -.-> survivor["SURVIVOR"]
+  other_filtered_vcf([filtered VCFs]) -.- survivor["SURVIVOR"]
 
   survivor:::myclass
   other_vcfs:::myclass2
