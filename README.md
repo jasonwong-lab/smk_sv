@@ -43,6 +43,10 @@ title: SV calling workflow
 ---
 
 flowchart TD
+
+  classDef myclass fill:#00B8A9, stroke-width:0px, padding:0px, margin:0px
+
+  subgraph main [" "]
   fastq([FASTQ]) -- Minimap2 --> bam([BAM])
   bam([BAM]) -- cuteSV --> cutesv_vcf([VCF])
   bam([BAM]) -- Sniffles2 --> sniffles2_vcf([VCF])
@@ -57,8 +61,16 @@ flowchart TD
   merged_vcf([merged VCF]) -- VEP, AnnotSV, and SnpEff --> annotated_vcf([annotated VCF/TSV])
   annotated_vcf([annotated VCF/TSV]) -.-> somatic_vcf([somatic SVs])
   annotated_vcf([annotated VCF/TSV]) -.-> germline_vcf([germline SVs])
+  end
+
+  subgraph other_callers [" "]
+  bam([BAM]) -- "other callers..." --> other_vcfs([VCFs])
+  other_vcfs([VCFs]) -- BCFtools --> other_filtered_vcf([filtered VCFs])
+  end
+
+  other_filtered_vcf([filtered VCFs]) --- survivor["SURVIVOR"]
+
   survivor:::myclass
-  classDef myclass fill:#00B8A9, stroke-width:0px, padding:0px, margin:0px
 ```
 
 
