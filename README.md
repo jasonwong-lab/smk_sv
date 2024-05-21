@@ -59,16 +59,16 @@ flowchart TD
   svim_filtered_vcf([filtered VCF]) --- survivor["SURVIVOR"]
   survivor["SURVIVOR"] --> merged_vcf([merged VCF])
   merged_vcf([merged VCF]) -- VEP, AnnotSV, and SnpEff --> annotated_vcf([annotated VCF/TSV])
-  annotated_vcf([annotated VCF/TSV]) -.-> somatic_vcf([somatic SVs])
-  annotated_vcf([annotated VCF/TSV]) -.-> germline_vcf([germline SVs])
+  annotated_vcf([annotated VCF/TSV]) --> somatic_vcf([somatic SVs])
+  annotated_vcf([annotated VCF/TSV]) --> germline_vcf([germline SVs])
   end
 
   subgraph other_callers [" "]
-  bam([BAM]) -- "other callers..." --> other_vcfs([VCFs])
+  bam([BAM]) -. "other callers..." .-> other_vcfs([VCFs])
   other_vcfs([VCFs]) -- BCFtools --> other_filtered_vcf([filtered VCFs])
   end
 
-  other_filtered_vcf([filtered VCFs]) --- survivor["SURVIVOR"]
+  other_filtered_vcf([filtered VCFs]) -.-> survivor["SURVIVOR"]
 
   survivor:::myclass
 ```
