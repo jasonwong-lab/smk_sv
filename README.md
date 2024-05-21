@@ -44,33 +44,29 @@ title: SV calling workflow
 
 flowchart TD
 
-  classDef myclass fill:#00B8A9, stroke-width:0px, padding:0px, margin:0px
+  classDef myclass fill:#00B8A9, stroke-width:0px, padding:0px, margin:0px;
+  classDef myclass2 fill:#FF8E8F;
 
-  subgraph main [" "]
   fastq([FASTQ]) -- Minimap2 --> bam([BAM])
   bam([BAM]) -- cuteSV --> cutesv_vcf([VCF])
   bam([BAM]) -- Sniffles2 --> sniffles2_vcf([VCF])
-  bam([BAM]) -- SVIM --> svim_vcf([VCF])
   cutesv_vcf([VCF]) -- BCFtools --> cutesv_filtered_vcf([filtered VCF])
   sniffles2_vcf([VCF]) -- BCFtools --> sniffles2_filtered_vcf([filtered VCF])
-  svim_vcf([VCF]) -- BCFtools --> svim_filtered_vcf([filtered VCF])
   cutesv_filtered_vcf([filtered VCF]) --- survivor["SURVIVOR"]
   sniffles2_filtered_vcf([filtered VCF]) --- survivor["SURVIVOR"]
-  svim_filtered_vcf([filtered VCF]) --- survivor["SURVIVOR"]
   survivor["SURVIVOR"] --> merged_vcf([merged VCF])
   merged_vcf([merged VCF]) -- VEP, AnnotSV, and SnpEff --> annotated_vcf([annotated VCF/TSV])
   annotated_vcf([annotated VCF/TSV]) --> somatic_vcf([somatic SVs])
   annotated_vcf([annotated VCF/TSV]) --> germline_vcf([germline SVs])
-  end
 
-  subgraph other_callers [" "]
-  bam([BAM]) -. "other callers..." .-> other_vcfs([VCFs])
-  other_vcfs([VCFs]) -- BCFtools --> other_filtered_vcf([filtered VCFs])
-  end
+  bam([BAM]) -. "other callers (e.g. SVIM)" .-> other_vcfs([VCFs])
+  other_vcfs([VCFs]) -. BCFtools .-> other_filtered_vcf([filtered VCFs])
 
   other_filtered_vcf([filtered VCFs]) -.-> survivor["SURVIVOR"]
 
   survivor:::myclass
+  other_vcfs:::myclass2
+  other_filtered_vcf:::myclass2
 ```
 
 
