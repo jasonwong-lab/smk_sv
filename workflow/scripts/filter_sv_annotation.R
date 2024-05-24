@@ -23,7 +23,7 @@ tsv_snpeff <- file_tsv |>
   my_vroom()
 id_info <- file_tab |>
   my_vroom(col_names = FALSE) |>
-  setNames(c("chr", "pos", "ref", "alt", "sniffles", "cutesv", "svim"))
+  setNames(c("chr", "pos", "ref", "alt", "sniffles", "severus", "cutesv", "svim", "svision"))
 if (nrow(annotsv) != 0) {
   tsv_annotsv <- annotsv |>
     dplyr::filter(ID %in% na.omit(id_info[[t]]))

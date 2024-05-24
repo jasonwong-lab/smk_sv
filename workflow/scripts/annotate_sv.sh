@@ -83,6 +83,11 @@ EOF
             awk 'BEGIN {OFS=FS="\t"} !/^#/ {$4 = "N"; $5 = "<DEL>"} 1' "${input_vep}" > "${input_vep%.*}".4_5.vcf
             input_vep="${input_vep%.*}".4_5.vcf
         fi
+        if [ "${v}" == "INS" ] || [ "${v}" == "DEL" ]; then
+            sed -e 's/SVTYPE=[^;]*;//g' "${input_vep}" > "${input_vep%.*}".SVTYPE.vcf
+            input_vep="${input_vep%.*}".SVTYPE.vcf
+        fi
+
         local vep_command=(vep -i "${input_vep}" -o "${vcf_vep}" --vcf --everything --filter_common --per_gene --total_length --offline --format vcf --assembly "${genome_version}" --cache_version "${version_vep}" --species homo_sapiens --fasta "${fasta}" --cache --dir_cache "${dir_db_vep}" --fork "${threads}" --max_sv_size 999999999999999999 --stats_file "${vcf_vep%.*}".html --force_overwrite)
         if [ "${v}" == BND ]; then
             "${vep_command[@]}" --buffer_size 50

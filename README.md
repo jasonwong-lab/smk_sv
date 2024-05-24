@@ -4,7 +4,7 @@
 
 Minghao Jiang, <jiang01@icloud.com>
 
-## Supported tools
+## Tools used
 
 - SV callers
    - [cuteSV](https://github.com/tjiangHIT/cuteSV)
@@ -19,7 +19,21 @@ Minghao Jiang, <jiang01@icloud.com>
 - Annotation tools
    - [AnnotSV](https://github.com/lgmgeo/AnnotSV)
    - [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html)
-   - [SnpEff](http://pcingola.github.io/SnpEff/)
+   - [SnpEff](http://pcingola.github.io/SnpEff/snpeff/introduction/)
+- Other tools
+   - [Minimap2](https://github.com/lh3/minimap2)
+   - [SAMtools](https://github.com/samtools/samtools)
+   - [BCFtools](http://samtools.github.io/bcftools/bcftools.html)
+   - [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR)
+   - [vcf2maf](https://github.com/mskcc/vcf2maf)
+   - [SnpSift](http://pcingola.github.io/SnpEff/snpsift/introduction/)
+- R packages
+   - [vroom](https://www.tidyverse.org/tags/vroom/)
+   - [tibble](https://tibble.tidyverse.org/reference/tibble-package.html)
+   - [glue](https://glue.tidyverse.org)
+   - [dplyr](https://dplyr.tidyverse.org)
+   - [tidyr](https://tidyr.tidyverse.org)
+   - [purrr](https://purrr.tidyverse.org)
 
 ## Pipeline structure
 
@@ -76,7 +90,7 @@ flowchart TD
 
    *Note: All steps below should be followed after you are in the `workflow` dir.*
 
-2. **Build the `singularity` or `apptainer` image from the Docker Hub** (using singularity as an example here):
+2. **Build a `apptainer` sandbox from the Docker image** (using singularity as an example here):
 
    ```shell
    mkdir singularities
@@ -91,14 +105,14 @@ flowchart TD
    singularity build --sandbox singularities/sv docker://mhjiang97/sv:latest
    ```
 
-   **Or build the image from the def file:**
+   **Or build it from the def file** (You might need `--fakeroot` to build from the singularity def file successfully.):
 
    ```shell
    mkdir singularities
    singularity build --sandbox singularities/sv scripts/sv.def
    ```
 
-   You might need `--fakeroot` to run `singularity build` successfully.
+   *Note: A Dockerfile is also provided in the directory `scripts`.*
 
 3. ~~There are some tools not included in the built docker image, e.g., [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html), [SnpEff](http://pcingola.github.io/SnpEff/), [vcf2maf](https://github.com/mskcc/vcf2maf), and some R packages, since one might have particular resources for annotating already. Thus, **you should install these missing tools manually**. (*Unfinished*)~~
 

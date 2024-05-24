@@ -92,8 +92,8 @@ filter_vep <- function(v, maf_vep, t) {
         maf_vep |>
           dplyr::filter(
             as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 |
-              as.numeric(vcf_qual) < 20 |
-              as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01
+              as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01 |
+              as.numeric(vcf_qual) < 20
           )
       } else {
         maf_vep |>
@@ -108,8 +108,8 @@ filter_vep <- function(v, maf_vep, t) {
         maf_vep |>
           dplyr::filter(
             as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 |
-              as.numeric(vcf_qual) < 20 |
-              as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01
+              as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01 |
+              as.numeric(vcf_qual) < 20
           )
       } else {
         maf_vep |>
@@ -124,8 +124,8 @@ filter_vep <- function(v, maf_vep, t) {
         maf_vep |>
           dplyr::filter(
             as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 |
-              as.numeric(vcf_qual) < 20 |
-              as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01
+              as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01 |
+              as.numeric(vcf_qual) < 20
           )
       } else {
         maf_vep |>
@@ -140,8 +140,8 @@ filter_vep <- function(v, maf_vep, t) {
         maf_vep |>
           dplyr::filter(
             as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 |
-              as.numeric(vcf_qual) < 20 |
-              as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01
+              as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01 |
+              as.numeric(vcf_qual) < 20
           )
       } else {
         maf_vep |>

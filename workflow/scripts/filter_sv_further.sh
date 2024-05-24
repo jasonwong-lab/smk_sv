@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
-# leave svs with genotype of 0/0
 
 vcf="${snakemake_input[vcf]}"
 vcf_filtered="${snakemake_output[vcf_filtered]}"

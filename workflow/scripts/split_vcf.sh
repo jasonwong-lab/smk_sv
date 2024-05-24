@@ -31,20 +31,21 @@ function split_vcf() {
 
     if { [ "${t}" == "cutesv" ] || [ "${t}" == "nanovar" ]; } && [ "${v}" == "BND" ]; then
         bcftools view -i 'SVTYPE ~ "BND"' "${vcf}" \
-            | sed -e 's/END=[0-9]\+;//g' > "${vcf_splitted}"
+            | sed -e 's/END=[0-9]\+;//g' \
+            | awk '!/[\[\]]chr[1-22XYM]:0[\[\]]/' > "${vcf_splitted}"
     elif [ "${t}" == "svim" ] && [ "${v}" == "DUP" ]; then
         bcftools view -i '(SVTYPE ~ "DUP:INT") | (SVTYPE ~ "DUP:TANDEM") | (SVTYPE ~ "DUP")' "${vcf}" > "${vcf_splitted}"
     elif [ "${t}" == "svim" ] && [ "${v}" == "INV" ]; then
         bcftools view -i 'SVTYPE ~ "INV"' "${vcf}" \
             | awk -F'\t' -v OFS='\t' '{
-                    if ($0 ~ /^#/) {print $0;} else {
-                        split($8, INFO, ";");
-                        split(INFO[2], array, "=");
-                        sub(/;/, ";SVLEN="array[2] - $2";", $8);
-                        $5="<INV>";
-                        print $0
-                    }
-                }' > "${vcf_splitted}"
+                if ($0 ~ /^#/) {print $0;} else {
+                    split($8, INFO, ";");
+                    split(INFO[2], array, "=");
+                    sub(/;/, ";SVLEN="array[2] - $2";", $8);
+                    $5="<INV>";
+                    print $0
+                }
+            }' > "${vcf_splitted}"
     elif [ "${t}" == "debreak" ] && [ "${v}" == "BND" ]; then
         bcftools view -i 'SVTYPE ~ "TRA"' "${vcf}" \
             | sed -e 's/SVTYPE=TRA/SVTYPE=BND/g' \

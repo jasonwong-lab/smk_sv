@@ -4,7 +4,7 @@ COPY delly /bin/delly
 COPY duphold /bin/duphold
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV PATH /opt/miniconda3/bin:/opt/ensembl-vep:/opt/snpEff/exec:/opt/mskcc-vcf2maf:/bin:/opt/bin:${PATH}
+ENV PATH /opt/miniconda3/bin:/opt/ensembl-vep:/opt/snpEff/exec:/bin:/opt/bin:${PATH}
 ENV BASH_ENV ~/.bashrc
 
 RUN rm /'=3.6' && \
@@ -69,12 +69,7 @@ RUN rm /'=3.6' && \
     git clone https://github.com/Ensembl/ensembl-vep.git /opt/ensembl-vep && \
     cd /opt/ensembl-vep && \
     /usr/bin/perl INSTALL.pl && \
-    VCF2MAF_URL=`curl -sL https://api.github.com/repos/mskcc/vcf2maf/releases | grep -m1 tarball_url | cut -d\" -f4` && \
-    cd /opt && \
-    curl -L -o mskcc-vcf2maf.tar.gz $VCF2MAF_URL && \
-    tar -zxf mskcc-vcf2maf.tar.gz && \
-    mv mskcc-vcf2maf-* mskcc-vcf2maf && \
-    chmod +x mskcc-vcf2maf/*.pl && \
+    conda create -n vcf2maf -c bioconda vcf2maf && \
     conda clean -a && \
     apt-get clean && \
     rm -rf mskcc-vcf2maf.tar.gz && \
@@ -95,9 +90,17 @@ RUN echo "conda activate clair3" >> ~/.bashrc && \
     ln -s /opt/miniconda3/envs/clair3/bin/run_clair3.sh /opt/bin/run_clair3.sh && \
     ln -s /opt/miniconda3/envs/clair3/bin/scripts /opt/bin/scripts && \
     ln -s /opt/miniconda3/envs/severus/bin/severus /opt/bin/severus && \
+    ln -s /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl /opt/bin/vcf2maf.pl && \
     sed -i '1s/.*/\#\!\/opt\/miniconda3\/envs\/debreak\/bin\/python3/' /opt/bin/debreak && \
     sed -i '3c\SCRIPT_PATH=$(dirname $(/bin/readlink -f "$0"))' /opt/bin/run_clair3.sh && \
-    echo 'export PERL5LIB=/etc/perl:/usr/local/lib/x86_64-linux-gnu/perl/5.26.1:/usr/local/share/perl/5.26.1:/usr/lib/x86_64-linux-gnu/perl5/5.26:/usr/share/perl5:/usr/lib/x86_64-linux-gnu/perl/5.26:/usr/share/perl/5.26:/usr/local/lib/site_perl:/usr/lib/x86_64-linux-gnu/perl-base:/opt/miniconda3/envs/clair3/lib/perl5/5.32/site_perl:/opt/miniconda3/envs/clair3/lib/perl5/site_perl:/opt/miniconda3/envs/clair3/lib/perl5/5.32/vendor_perl:/opt/miniconda3/envs/clair3/lib/perl5/vendor_perl:/opt/miniconda3/envs/clair3/lib/perl5/5.32/core_perl:/opt/miniconda3/envs/clair3/lib/perl5/core_perl:${PERL5LIB}' >> ~/.bashrc
+    sed -i '410s/^/# /' /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl && \
+    sed -i '1s/.*/\#\!\/opt\/miniconda3\/envs\/vcf2maf\/bin\/perl/' /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl
 
-ENV PATH /opt/miniconda3/envs/clair3/bin:${PATH}
+RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test && \
+    apt install -y g++-11 && \
+    apt-get clean && \
+    rm -rf /bar/lib/apt/lists/* && \
+    rm -rf /tmp/*
+
+ENV PATH ${PATH}:/opt/miniconda3/envs/clair3/bin
 
