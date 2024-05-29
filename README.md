@@ -7,33 +7,20 @@ Minghao Jiang, <jiang01@icloud.com>
 ## Tools used
 
 - SV callers
-   - [cuteSV](https://github.com/tjiangHIT/cuteSV)
-   - [Sniffles](https://github.com/fritzsedlazeck/Sniffles)
-   - [SVIM](https://github.com/eldariont/svim)
-   - [SVision](https://github.com/xjtu-omics/SVision)
-   - [Severus](https://github.com/KolmogorovLab/Severus)
-   - [NanoSV](https://github.com/mroosmalen/nanosv)
-   - [NanoVar](https://github.com/cytham/nanovar)
-   - [Delly](https://github.com/dellytools/delly)
-   - [Debreak](https://github.com/Maggi-Chen/DeBreak)
+
+   [cuteSV](https://github.com/tjiangHIT/cuteSV), [Sniffles](https://github.com/fritzsedlazeck/Sniffles), [SVIM](https://github.com/eldariont/svim), [SVision](https://github.com/xjtu-omics/SVision), [Severus](https://github.com/KolmogorovLab/Severus), [NanoSV](https://github.com/mroosmalen/nanosv), [NanoVar](https://github.com/cytham/nanovar), [Delly](https://github.com/dellytools/delly), [Debreak](https://github.com/Maggi-Chen/DeBreak)
+
 - Annotation tools
-   - [AnnotSV](https://github.com/lgmgeo/AnnotSV)
-   - [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html)
-   - [SnpEff](http://pcingola.github.io/SnpEff/snpeff/introduction/)
-- Other tools
-   - [Minimap2](https://github.com/lh3/minimap2)
-   - [SAMtools](https://github.com/samtools/samtools)
-   - [BCFtools](http://samtools.github.io/bcftools/bcftools.html)
-   - [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR)
-   - [vcf2maf](https://github.com/mskcc/vcf2maf)
-   - [SnpSift](http://pcingola.github.io/SnpEff/snpsift/introduction/)
+
+   [AnnotSV](https://github.com/lgmgeo/AnnotSV), [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html), [SnpEff](http://pcingola.github.io/SnpEff/snpeff/introduction/)
+
 - R packages
-   - [vroom](https://www.tidyverse.org/tags/vroom/)
-   - [tibble](https://tibble.tidyverse.org/reference/tibble-package.html)
-   - [glue](https://glue.tidyverse.org)
-   - [dplyr](https://dplyr.tidyverse.org)
-   - [tidyr](https://tidyr.tidyverse.org)
-   - [purrr](https://purrr.tidyverse.org)
+
+   [vroom](https://www.tidyverse.org/tags/vroom/), [tibble](https://tibble.tidyverse.org/reference/tibble-package.html), [glue](https://glue.tidyverse.org), [dplyr](https://dplyr.tidyverse.org), [tidyr](https://tidyr.tidyverse.org), [purrr](https://purrr.tidyverse.org)
+
+- Other tools
+
+   [Minimap2](https://github.com/lh3/minimap2), [SAMtools](https://github.com/samtools/samtools), [BCFtools](http://samtools.github.io/bcftools/bcftools.html), [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR), [vcf2maf](https://github.com/mskcc/vcf2maf), [SnpSift](http://pcingola.github.io/SnpEff/snpsift/introduction/)
 
 ## Pipeline structure
 
@@ -114,11 +101,11 @@ flowchart TD
 
    *Note: A Dockerfile is also provided in the directory `scripts`.*
 
-3. ~~There are some tools not included in the built docker image, e.g., [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html), [SnpEff](http://pcingola.github.io/SnpEff/), [vcf2maf](https://github.com/mskcc/vcf2maf), and some R packages, since one might have particular resources for annotating already. Thus, **you should install these missing tools manually**. (*Unfinished*)~~
+3. ~~There are some tools not included in the container, *e.g.*, [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html), [SnpEff](http://pcingola.github.io/SnpEff/), [vcf2maf](https://github.com/mskcc/vcf2maf), and some R packages, since one might have particular resources for annotating already. Thus, **you should install these missing tools manually**.~~
 
    ~~*Note: R packages will be installed automatically when running the pipeline if needed*~~
 
-   *They are included in the image now. However, the image size would be larger (~ 9GB).*
+   They are included in the image now. However, the image size would be larger (~ 9GB).
 
    *Note: When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv`. Don't forget to make `vep` executable in your environment.*
 
