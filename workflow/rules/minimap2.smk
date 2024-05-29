@@ -2,7 +2,7 @@ rule make_index_minimap2:
     input:
         fasta=config["fasta"],
     output:
-        index_minimap2=config["index_minimap2"],
+        index_minimap2=protected(config["index_minimap2"]),
     threads: config["threads"]
     shell:
         "minimap2 -t {threads} -d {output.index_minimap2} {input.fasta}"

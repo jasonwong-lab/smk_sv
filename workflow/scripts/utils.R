@@ -19,21 +19,23 @@ load_pkg(
   )
 )
 
-my_vroom <- function(file, na_append = NULL, delim = "\t", comment = "#", col_names = TRUE) {
+my_vroom <- function(file, na_append = NULL, delim = "\t", comment = "#", col_names = TRUE, guess_lines = 10, n_col = NULL, ...) {
   na_origin <- c("", "NA", "NaN")
   myna <- c(na_origin, na_append)
 
-  n_col <- vroom::vroom(
-    file,
-    delim = delim, n_max = 10, col_types = vroom::cols(),
-    na = myna, comment = comment, col_names = col_names
-  ) |>
-    ncol()
+  if (is.null(n_col)) {
+    n_col <- vroom::vroom(
+      file,
+      delim = delim, n_max = guess_lines, col_types = vroom::cols(),
+      na = myna, comment = comment, col_names = col_names, guess_max = Inf, ...
+    ) |>
+      ncol()
+  }
 
   dat <- vroom::vroom(
     file,
     delim = delim, col_types = paste0(rep_len("c", n_col), collapse = ""),
-    na = myna, comment = comment, col_names = col_names
+    na = myna, comment = comment, col_names = col_names, ...
   )
 
   dat
@@ -241,8 +243,8 @@ filter_annotsv <- function(v, tsv_annotsv) {
     BND = {
       tsv_annotsv |>
         dplyr::filter(
-          grepl("leuka?emia", GenCC_disease, ignore.case = TRUE) |
-            grepl("leuka?emia", OMIM_phenotype, ignore.case = TRUE) |
+          grepl("leuka?emia|blood", GenCC_disease, ignore.case = TRUE) |
+            grepl("leuka?emia|blood", OMIM_phenotype, ignore.case = TRUE) |
             grepl("^4$|^5$", ACMG_class) |
             as.numeric(AnnotSV_ranking_score) >= 0.9
         )
@@ -250,8 +252,8 @@ filter_annotsv <- function(v, tsv_annotsv) {
     DEL = {
       tsv_annotsv |>
         dplyr::filter(
-          grepl("leuka?emia", GenCC_disease, ignore.case = TRUE) |
-            grepl("leuka?emia", OMIM_phenotype, ignore.case = TRUE) |
+          grepl("leuka?emia|blood", GenCC_disease, ignore.case = TRUE) |
+            grepl("leuka?emia|blood", OMIM_phenotype, ignore.case = TRUE) |
             grepl("^4$|^5$", ACMG_class) |
             as.numeric(AnnotSV_ranking_score) >= 0.9
         )
@@ -259,8 +261,8 @@ filter_annotsv <- function(v, tsv_annotsv) {
     INS = {
       tsv_annotsv |>
         dplyr::filter(
-          grepl("leuka?emia", GenCC_disease, ignore.case = TRUE) |
-            grepl("leuka?emia", OMIM_phenotype, ignore.case = TRUE) |
+          grepl("leuka?emia|blood", GenCC_disease, ignore.case = TRUE) |
+            grepl("leuka?emia|blood", OMIM_phenotype, ignore.case = TRUE) |
             grepl("^4$|^5$", ACMG_class) |
             as.numeric(AnnotSV_ranking_score) >= 0.9
         )
@@ -268,8 +270,8 @@ filter_annotsv <- function(v, tsv_annotsv) {
     INV = {
       tsv_annotsv |>
         dplyr::filter(
-          grepl("leuka?emia", GenCC_disease, ignore.case = TRUE) |
-            grepl("leuka?emia", OMIM_phenotype, ignore.case = TRUE) |
+          grepl("leuka?emia|blood", GenCC_disease, ignore.case = TRUE) |
+            grepl("leuka?emia|blood", OMIM_phenotype, ignore.case = TRUE) |
             grepl("^4$|^5$", ACMG_class) |
             as.numeric(AnnotSV_ranking_score) >= 0.9
         )
@@ -277,8 +279,8 @@ filter_annotsv <- function(v, tsv_annotsv) {
     DUP = {
       tsv_annotsv |>
         dplyr::filter(
-          grepl("leuka?emia", GenCC_disease, ignore.case = TRUE) |
-            grepl("leuka?emia", OMIM_phenotype, ignore.case = TRUE) |
+          grepl("leuka?emia|blood", GenCC_disease, ignore.case = TRUE) |
+            grepl("leuka?emia|blood", OMIM_phenotype, ignore.case = TRUE) |
             grepl("^4$|^5$", ACMG_class) |
             as.numeric(AnnotSV_ranking_score) >= 0.9
         )
@@ -292,44 +294,36 @@ filter_annotsv <- function(v, tsv_annotsv) {
     BND = {
       tsv_annotsv |>
         dplyr::filter(
-          as.numeric(B_gain_AFmax) >= 0.05 & as.numeric(B_loss_AFmax) >= 0.05 |
-            as.numeric(DDD_HI_percent) >= 95
-          # !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right)
+          as.numeric(B_gain_AFmax) >= 0.05 & as.numeric(B_loss_AFmax) >= 0.05
+          # // !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(DDD_HI_percent) >= 95
         )
     },
     DEL = {
       tsv_annotsv |>
         dplyr::filter(
-          as.numeric(B_loss_AFmax) >= 0.05 |
-            as.numeric(ExAC_delZ) <= 0 | as.numeric(DDD_HI_percent) >= 90 |
-            !is.na(po_B_loss_allG_coord)
-          # !is.na(po_B_loss_someG_coord) | !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right)
+          as.numeric(B_loss_AFmax) >= 0.05 | !is.na(po_B_loss_allG_coord)
+          # // !is.na(po_B_loss_someG_coord) | !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(ExAC_delZ) <= 0 | as.numeric(DDD_HI_percent) >= 90
         )
     },
     INS = {
       tsv_annotsv |>
         dplyr::filter(
-          as.numeric(B_ins_AFmax) >= 0.05 |
-            as.numeric(ExAC_cnvZ) <= 0 | as.numeric(DDD_HI_percent) >= 90 |
-            !is.na(po_B_gain_allG_coord)
-          # !is.na(po_B_loss_someG_coord) | !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right)
+          as.numeric(B_ins_AFmax) >= 0.05 | !is.na(po_B_gain_allG_coord)
+          # // !is.na(po_B_loss_someG_coord) | !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(ExAC_cnvZ) <= 0 | as.numeric(DDD_HI_percent) >= 90
         )
     },
     INV = {
       tsv_annotsv |>
         dplyr::filter(
-          as.numeric(B_inv_AFmax) >= 0.05 |
-            as.numeric(DDD_HI_percent) >= 90
-          # !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right)
+          as.numeric(B_inv_AFmax) >= 0.05
+          # // !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(DDD_HI_percent) >= 90
         )
     },
     DUP = {
       tsv_annotsv |>
         dplyr::filter(
-          as.numeric(B_gain_AFmax) >= 0.05 |
-            as.numeric(DDD_HI_percent) >= 90 |
-            !is.na(po_B_gain_allG_coord)
-          # !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right)
+          as.numeric(B_gain_AFmax) >= 0.05 | !is.na(po_B_gain_allG_coord)
+          # // !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(DDD_HI_percent) >= 90
         )
     }
   ) |>

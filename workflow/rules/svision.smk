@@ -44,7 +44,8 @@ rule call_sv_svision:
             | awk '/^##ALT/ && !f {{print "##ALT=<ID=INS,Description=\\"INS\\">\\n##ALT=<ID=INV,Description=\\"INV\\">\\n##ALT=<ID=DUP,Description=\\"DUP\\">\\n##ALT=<ID=DUP:TANDEM,Description=\\"DUP:TANDEM\\">\\n##ALT=<ID=DEL,Description=\\"DEL\\">"; f=1}} 1' \\
             | awk '/^##INFO=<ID=SUPPORT,/ {{sub("Type=String", "Type=Integer")}} 1' \\
             | bcftools reheader -s {output.tab_rename} \\
-            > {output.vcf}
+            | awk -F'\\t' -v OFS='\\t' '{{if ($0 ~ /^#/) {{print $0;}} else {{$3=$1"_"$2"_"$3; print $0}}}}' \\
+        > {output.vcf}
 
         mkdir {params.dir_out}/chrs
         mv {params.dir_out}/*chr*.vcf {params.dir_out}/*chr*.txt {params.dir_out}/*.log {params.dir_out}/chrs/

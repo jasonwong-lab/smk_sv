@@ -124,6 +124,8 @@ flowchart TD
 
 4. **You should install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself**, as it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
 
+   *Note: Creating a lock file for each combination of sample/type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, you can add `threads: workflow.cores` to the rule `annotate_sv_annotsv` to ensure that only one instance of this rule runs at a time.*
+
 5. **Modify the `../config/config.yaml`** to specify needed file paths.
 
    *Note: You must change the file paths specified in the config.*

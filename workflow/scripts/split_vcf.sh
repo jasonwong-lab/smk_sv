@@ -33,6 +33,16 @@ function split_vcf() {
         bcftools view -i 'SVTYPE ~ "BND"' "${vcf}" \
             | sed -e 's/END=[0-9]\+;//g' \
             | awk '!/[\[\]]chr[1-22XYM]:0[\[\]]/' > "${vcf_splitted}"
+    elif [ "${t}" == "cutesv" ] && [ "${v}" == "DEL" ]; then
+        bcftools view -i 'SVTYPE ~ "DEL" & ABS(INFO/SVLEN) <= 999999' "${vcf}" > "${vcf_splitted}"
+    elif [ "${t}" == "svision" ]; then
+        bcftools view -i "SVTYPE ~ \"${v}\"" "${vcf}" \
+            | awk -F'\t' -v OFS='\t' '{
+                if ($0 ~ /^#/) {print $0;} else {
+                    $3=$1"_"$2"_"$3;
+                    print $0
+                }
+            }' > "${vcf_splitted}"
     elif [ "${t}" == "svim" ] && [ "${v}" == "DUP" ]; then
         bcftools view -i '(SVTYPE ~ "DUP:INT") | (SVTYPE ~ "DUP:TANDEM") | (SVTYPE ~ "DUP")' "${vcf}" > "${vcf_splitted}"
     elif [ "${t}" == "svim" ] && [ "${v}" == "INV" ]; then

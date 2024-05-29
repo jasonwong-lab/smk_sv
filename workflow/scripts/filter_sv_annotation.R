@@ -12,24 +12,26 @@ vcf <- snakemake@input[["vcf"]]
 vcf_final <- snakemake@output[["vcf_final"]]
 ids_tmp <- snakemake@output[["ids"]]
 table_tsv <- snakemake@output[["table"]]
+caller <- sort(snakemake@params[["caller"]])
 
 
 annotsv <- file_annotsv |>
-  my_vroom()
+  my_vroom(n_col = 120, quote = "\'")
 maf_vep <- file_maf |>
-  my_vroom() |>
+  my_vroom(na_append = ".") |>
   tidyr::drop_na(Start_Position)
 tsv_snpeff <- file_tsv |>
   my_vroom()
 id_info <- file_tab |>
   my_vroom(col_names = FALSE) |>
-  setNames(c("chr", "pos", "ref", "alt", "sniffles", "severus", "cutesv", "svim", "svision"))
+  setNames(c("chr", "pos", "ref", "alt", caller))
 if (nrow(annotsv) != 0) {
   tsv_annotsv <- annotsv |>
     dplyr::filter(ID %in% na.omit(id_info[[t]]))
 } else {
   tsv_annotsv <- annotsv
 }
+message(glue("[INFO] Applying filters on {s} | {t} | {v} ..."))
 ids <- filter_svid(
   caller = t, sv_type = v,
   annotsv_result = tsv_annotsv, vep_result = maf_vep, snpeff_result = tsv_snpeff,
