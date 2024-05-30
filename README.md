@@ -96,10 +96,10 @@ flowchart TD
 
    ```shell
    mkdir singularities
-   singularity build --sandbox singularities/sv scripts/sv.def
+   singularity build --sandbox singularities/sv scripts/container/sv.def
    ```
 
-   *Note: A Dockerfile is also provided in the directory `scripts`.*
+   *Note: A Dockerfile is also provided in the directory `scripts/container/`.*
 
 3. ~~There are some tools not included in the container, *e.g.*, [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html), [SnpEff](http://pcingola.github.io/SnpEff/), [vcf2maf](https://github.com/mskcc/vcf2maf), and some R packages, since one might have particular resources for annotating already. Thus, **you should install these missing tools manually**.~~
 

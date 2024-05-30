@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
 
+set -x
+
 vcf="${snakemake_input[vcf]}"
 vcf_filtered="${snakemake_output[vcf_filtered]}"
 min_num_reads="${snakemake_params[min_num_reads]}"

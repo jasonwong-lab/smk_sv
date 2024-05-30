@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
 
+set -x
+
 vcf="${snakemake_input[vcf]}"
 fasta="${snakemake_input[fasta]}"
 dir_db_snpeff="${snakemake_input[dir_db_snpeff]}"

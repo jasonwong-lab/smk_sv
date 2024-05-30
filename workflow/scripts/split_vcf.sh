@@ -1,5 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # shellcheck disable=SC2154
+
+set -x
 
 vcf_filtered="${snakemake_input[vcf_filtered]}"
 vcf_splitted="${snakemake_output[vcf_splitted]}"
@@ -61,6 +63,15 @@ function split_vcf() {
             | sed -e 's/SVTYPE=TRA/SVTYPE=BND/g' \
             | awk '/^##ALT/ && !f {print "##ALT=<ID=BND,Description=\"BND\">"; f=1} 1' \
             | awk 'BEGIN {OFS=FS="\t"} !/^#/ {$5 = "<BND>"} 1' > "${vcf_splitted}"
+    # !----- Remeber to delete this condition when publishing ---------------! #
+    elif [ "${t}" == "svision" ]; then
+        bcftools view -i "SVTYPE ~ \"${v}\"" "${vcf}" \
+            | awk -F'\t' -v OFS='\t' '{
+                if ($0 ~ /^#/) {print $0;} else {
+                    $3=$1"_"$2"_"$3;
+                    print $0
+                }
+            }' > "${vcf_splitted}"
     else
         bcftools view -i "SVTYPE ~ \"${v}\"" "${vcf}" > "${vcf_splitted}"
     fi

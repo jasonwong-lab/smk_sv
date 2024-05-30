@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # shellcheck disable=SC2154
 
 vcf="${snakemake_input[vcf]}"
@@ -44,7 +44,7 @@ function filter_sv() {
     if [ "${t}" == "cutesv" ]; then
         local formula="INFO/RE < ${min_num_reads} | (INFO/SVTYPE != \"BND\" & ABS(INFO/SVLEN) < ${min_length_sv}) | FMT/DV[0] < ${min_num_reads} | (FMT/DR[0] < ${min_num_reads} & FMT/DV[0] + FMT/DR[0] < ${min_coverage})"
     elif [ "${t}" == "svim" ]; then
-        local formula="INFO/SUPPORT < ${min_num_reads} | (INFO/SVTYPE != \"BND\" & ABS(INFO/SVLEN) < ${min_length_sv}) | (SVTYPE = \"DEL,INS\" & FMT/AD[0:1] < ${min_num_reads} | (FMT/AD[0:0] < ${min_num_reads} & FMT/DP[0] < ${min_coverage}))"
+        local formula="INFO/SUPPORT < ${min_num_reads} | (INFO/SVTYPE != \"BND\" & ABS(INFO/SVLEN) < ${min_length_sv}) | (SVTYPE = \"DEL,INS\" & FMT/AD[0:1] < ${min_num_reads}) | (SVTYPE = \"DEL,INS\" & FMT/AD[0:0] < ${min_num_reads} & FMT/DP[0] < ${min_coverage})"
     elif [ "${t}" == "severus" ]; then
         local formula="FMT/DV[0] < ${min_num_reads} | (INFO/SVTYPE != \"BND\" & ABS(INFO/SVLEN) < ${min_length_sv}) | (FMT/DR[0] < ${min_num_reads} & FMT/DV[0] + FMT/DR[0] < ${min_coverage})"
     elif [ "${t}" == "debreak" ]; then
