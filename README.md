@@ -78,8 +78,10 @@ flowchart TD
    Note:
       - Follow all steps below after you are in the `workflow` dir.
       - Uncomment all rules in the `Snakefile`.
+      - Check the predefined `wildcards_constraints` in the `Snakefile` and modify/delete it if necessary.
+      - Using a JSON schema to validate the configuration file might prevent Snakemake from monitoring changes to the parameters. You can comment the `validate(config, "../config/config.schema.json")` in the `Snakefile`.
 
-2. **Build a `apptainer` sandbox**:
+2. **Build an `apptainer` sandbox**:
 
    ```shell
    mkdir singularities
@@ -96,7 +98,7 @@ flowchart TD
 
    Note:
       - A Dockerfile is also provided in the directory `scripts/container/`.
-      - The container size could be large (~ 10GB).*
+      - The container size could be large (~ 10GB).
 
 
 3. For SV annotation, VEP and SnpEff are included in the container, but **you should install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself** because it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.

@@ -3,20 +3,20 @@
   "type": "object",
   "properties": {
     "dir_run": { "type": "string", "default": "./" },
-    "map_fastq": { "type": "boolean", "default": true },
+    "map_fastq": { "type": "boolean", "default": false },
     "mapper": { "type": "string", "minLength": 1, "enum": ["minimap2"], "default": "minimap2"},
     "caller": {
       "type": "object",
       "properties": {
-        "cutesv": { "type": "boolean", "default": true },
-        "severus": { "type": "boolean", "default": true },
-        "sniffles": { "type": "boolean", "default": true },
-        "svim": { "type": "boolean", "default": true },
-        "svision": { "type": "boolean", "default": true },
-        "debreak": { "type": "boolean", "default": true },
-        "delly": { "type": "boolean", "default": true },
-        "nanosv": { "type": "boolean", "default": true },
-        "nanovar": { "type": "boolean", "default": true }
+        "cutesv": { "type": "boolean", "default": false },
+        "severus": { "type": "boolean", "default": false },
+        "sniffles": { "type": "boolean", "default": false },
+        "svim": { "type": "boolean", "default": false },
+        "svision": { "type": "boolean", "default": false },
+        "debreak": { "type": "boolean", "default": false },
+        "delly": { "type": "boolean", "default": false },
+        "nanosv": { "type": "boolean", "default": false },
+        "nanovar": { "type": "boolean", "default": false }
       },
       "minProperties": 1
     },
@@ -68,33 +68,33 @@
     "merge_type_sv": {
       "type": "object",
       "properties": {
-        "BND": { "type": "boolean" },
-        "DEL": { "type": "boolean" },
-        "INS": { "type": "boolean" },
-        "INV": { "type": "boolean" },
-        "DUP": { "type": "boolean" }
+        "BND": { "type": "boolean", "default": true },
+        "DEL": { "type": "boolean", "default": true },
+        "INS": { "type": "boolean", "default": true },
+        "INV": { "type": "boolean", "default": true },
+        "DUP": { "type": "boolean", "default": true }
       },
       "minProperties": 1
     },
     "merge_strand": {
       "type": "object",
       "properties": {
-        "BND": { "type": "boolean" },
-        "DEL": { "type": "boolean" },
-        "INS": { "type": "boolean" },
-        "INV": { "type": "boolean" },
-        "DUP": { "type": "boolean" }
+        "BND": { "type": "boolean", "default": true },
+        "DEL": { "type": "boolean", "default": true },
+        "INS": { "type": "boolean", "default": true },
+        "INV": { "type": "boolean", "default": true },
+        "DUP": { "type": "boolean", "default": true }
       },
       "minProperties": 1
     },
     "merge_estimate_distance": {
       "type": "object",
       "properties": {
-        "BND": { "type": "boolean" },
-        "DEL": { "type": "boolean" },
-        "INS": { "type": "boolean" },
-        "INV": { "type": "boolean" },
-        "DUP": { "type": "boolean" }
+        "BND": { "type": "boolean", "default": true },
+        "DEL": { "type": "boolean", "default": true },
+        "INS": { "type": "boolean", "default": true },
+        "INV": { "type": "boolean", "default": true },
+        "DUP": { "type": "boolean", "default": true }
       },
       "minProperties": 1
     },

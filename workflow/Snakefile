@@ -21,7 +21,7 @@ CALLERS = [
 configfile: "../config/config.yaml"
 
 
-validate(config, "../config/config.schema.yaml")
+# validate(config, "../config/config.schema.json")
 
 
 pepfile: "../config/pep/config.yaml"
@@ -36,7 +36,9 @@ wildcard_constraints:
     caller="\w+",
 
 
-workdir: config["dir_run"]
+if config["dir_run"]:
+
+    workdir: config["dir_run"]
 
 
 # *--------------------------------------------------------------------------* #
