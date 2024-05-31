@@ -6,4 +6,4 @@ rule split_vcf:
     log:
         "logs/{sample}/split_vcf.{caller}.{type_sv}.log",
     script:
-        "scripts/split_vcf.sh"
+        "../scripts/split_vcf.sh"

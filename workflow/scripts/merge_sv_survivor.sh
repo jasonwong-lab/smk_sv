@@ -36,9 +36,9 @@ mapfile -t vcfs < <(echo "${list_string}" | sort)
 printf "%s\n" "${vcfs[@]}" | xargs realpath > "${list_vcfs}"
 
 
-formula="${merge_distance_sv} ${merge_nbr_callers} ${merge_type_sv} ${merge_strand} ${merge_estimate_distance} ${min_length_sv}"
+formula=("${merge_distance_sv}" "${merge_nbr_callers}" "${merge_type_sv}" "${merge_strand}" "${merge_estimate_distance}" "${min_length_sv}")
 
-SURVIVOR merge "${list_vcfs}" "${formula}" "${vcf_merged_tmp}"
+SURVIVOR merge "${list_vcfs}" "${formula[@]}" "${vcf_merged_tmp}"
 
 for i in "${!caller[@]}"; do
     line="${sample}_${i}\t${sample}_${caller[${i}]}\n"

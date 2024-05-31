@@ -14,4 +14,4 @@ rule convert_annotation:
     log:
         "logs/{sample}/convert_annotation.{caller}.{type_sv}.log",
     script:
-        "scripts/convert_annotation.sh"
+        "../scripts/convert_annotation.sh"

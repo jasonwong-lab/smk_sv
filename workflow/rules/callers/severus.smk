@@ -16,7 +16,8 @@ rule phasenhaplotag_bam_clair3:
         "logs/{sample}/phasenhaplotag_bam_clair3.log",
     shell:
         """
-        {{ run_clair3.sh \\
+        {{ source activate clair3
+        run_clair3.sh \\
         --use_whatshap_for_final_output_haplotagging \\
         --use_whatshap_for_final_output_phasing \\
         --enable_phasing \\

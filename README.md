@@ -77,7 +77,7 @@ flowchart TD
 
    *Note: All steps below should be followed after you are in the `workflow` dir.*
 
-2. **Build a `apptainer` sandbox from the Docker image** (using singularity as an example here):
+2. **Build a `apptainer` sandbox**:
 
    ```shell
    mkdir singularities
@@ -85,14 +85,7 @@ flowchart TD
    singularity build --sandbox singularities/sv singularities/sv.sif
    ```
 
-   Or:
-
-   ```shell
-   mkdir singularities
-   singularity build --sandbox singularities/sv docker://mhjiang97/sv:latest
-   ```
-
-   **Or build it from the def file** (You might need `--fakeroot` to build from the singularity def file successfully.):
+   **Or build it from the def file** (You might need `--fakeroot` to build from a singularity def file):
 
    ```shell
    mkdir singularities
@@ -103,11 +96,9 @@ flowchart TD
 
 3. ~~There are some tools not included in the container, *e.g.*, [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html), [SnpEff](http://pcingola.github.io/SnpEff/), [vcf2maf](https://github.com/mskcc/vcf2maf), and some R packages, since one might have particular resources for annotating already. Thus, **you should install these missing tools manually**.~~
 
-   ~~*Note: R packages will be installed automatically when running the pipeline if needed*~~
-
    They are included in the image now. However, the image size would be larger (~ 9GB).
 
-   *Note: When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv`. Don't forget to make `vep` executable in your environment.*
+   *Note: When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv_snpeffnvep`. Don't forget to make `vep` executable in your environment.*
 
 4. **You should install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself**, as it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
 

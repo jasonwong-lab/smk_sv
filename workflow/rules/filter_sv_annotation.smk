@@ -15,4 +15,4 @@ rule filter_sv_annotation:
         libs_r=config["libs_r"],
         caller=config["caller"],
     script:
-        "scripts/filter_sv_annotation.R"
+        "../scripts/filter_sv_annotation.R"

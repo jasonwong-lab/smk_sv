@@ -16,8 +16,7 @@ rule call_sv_svision:
         "logs/{sample}/call_sv_svision.log",
     shell:
         """
-        {{ echo -e "{wildcards.sample}.chr1\\t{wildcards.sample}" > {output.tab_rename}
-        for chr in chr{{1..22}} chrX chrY; do
+        {{ for chr in chr{{1..22}} chrX chrY; do
             echo -e "[INFO] Running SVision on chromosome ${{chr}}..."
             SVision \\
             -t {threads} \\
@@ -37,8 +36,10 @@ rule call_sv_svision:
             sleep 10
         done
 
-        vcf_svision_chr1={params.dir_out}/{wildcards.sample}.chr1.svision.s{params.min_num_reads}.graph.vcf
-        {{ grep '^#' ${{vcf_svision_chr1}}; cat {params.dir_out}/{wildcards.sample}.*.vcf | grep -v '^#'; }} \\
+        vcf_svision_lead=$(find {params.dir_out}/{wildcards.sample}.chr*.svision.s{params.min_num_reads}.graph.vcf | head -1)
+        chrom=$(basename $vcf_svision_lead | cut -d'.' -f2)
+        echo -e "{wildcards.sample}.${{chrom}}\\t{wildcards.sample}" > {output.tab_rename}
+        {{ grep '^#' ${{vcf_svision_lead}}; cat {params.dir_out}/{wildcards.sample}.chr*.svision.s{params.min_num_reads}.graph.vcf | grep -v '^#'; }} \\
             | awk '/^##INFO=<ID=GFA_L/ && !f {{print "##INFO=<ID=GFA_ID,Number=.,Type=String,Description=\\"GFA_ID\\">"; f=1}} 1' \\
             | awk 'BEGIN{{FS=OFS="\\t"}} /^#/ || $5 == "<CSV>" {{print; next}} {{split($8, a, ";"); for(i in a) {{if(a[i] ~ /^SVTYPE=/) {{split(a[i], b, "="); if(b[2] == "tDUP") b[2] = "DUP:TANDEM"; gsub("<SV>", "<"b[2]">", $5)}}}}}}1' \\
             | awk '/^##ALT/ && !f {{print "##ALT=<ID=INS,Description=\\"INS\\">\\n##ALT=<ID=INV,Description=\\"INV\\">\\n##ALT=<ID=DUP,Description=\\"DUP\\">\\n##ALT=<ID=DUP:TANDEM,Description=\\"DUP:TANDEM\\">\\n##ALT=<ID=DEL,Description=\\"DEL\\">"; f=1}} 1' \\

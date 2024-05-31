@@ -20,4 +20,4 @@ rule merge_sv_survivor:
     log:
         "logs/{sample}/merge_sv_survivor.{type_sv}.log",
     script:
-        "scripts/merge_sv_survivor.sh"
+        "../scripts/merge_sv_survivor.sh"

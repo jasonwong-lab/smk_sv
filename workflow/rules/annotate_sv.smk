@@ -17,7 +17,7 @@ rule annotate_sv_snpeffnvep:
     log:
         "logs/{sample}/annotate_sv_snpeffnvep.{caller}.{type_sv}.log",
     script:
-        "scripts/annotate_sv.sh"
+        "../scripts/annotate_sv.sh"
 
 
 rule annotate_sv_annotsv:
@@ -33,4 +33,4 @@ rule annotate_sv_annotsv:
     log:
         "logs/{sample}/annotate_sv_annotsv.{caller}.{type_sv}.log",
     script:
-        "scripts/annotate_sv_annotsv.sh"
+        "../scripts/annotate_sv_annotsv.sh"

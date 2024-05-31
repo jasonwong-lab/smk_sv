@@ -17,4 +17,4 @@ rule filter_sv:
     log:
         "logs/{sample}/filter_sv.{caller}.log",
     script:
-        "scripts/filter_sv.sh"
+        "../scripts/filter_sv.sh"

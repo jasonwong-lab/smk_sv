@@ -45,7 +45,7 @@ rule all:
     input:
         output_required=expand(
             "survivor/{sample}/final/{sample}.{type_sv}.merged.vcf",
-            sample=pep.sample_table["sample_name"],
+            sample="test", # pep.sample_table["sample_name"],
             type_sv=config["type_sv"],
         ),
 
@@ -53,7 +53,7 @@ rule all:
 # *--------------------------------------------------------------------------* #
 # * All included rules                                                       * #
 # *--------------------------------------------------------------------------* #
-if config["map_fastq"] and confg["mapper"] in MAPPERS:
+if config["map_fastq"] and config["mapper"] in MAPPERS:
 
     include: f"rules/mappers/{config['mapper']}.smk"
 

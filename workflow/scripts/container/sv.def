@@ -97,6 +97,8 @@ ln -s /opt/miniconda3/envs/clair3/bin/run_clair3.sh /opt/bin/run_clair3.sh && \
 ln -s /opt/miniconda3/envs/clair3/bin/scripts /opt/bin/scripts && \
 ln -s /opt/miniconda3/envs/severus/bin/severus /opt/bin/severus && \
 ln -s /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl /opt/bin/vcf2maf.pl && \
+ln -s /opt/miniconda3/envs/clair3/bin/samtools /opt/bin/samtools && \
+ln -s /opt/miniconda3/envs/clair3/bin/clair3.py /opt/bin/clair3.py && \
 sed -i '1s/.*/\#\!\/opt\/miniconda3\/envs\/debreak\/bin\/python3/' /opt/bin/debreak && \
 sed -i '3c\SCRIPT_PATH=$(dirname $(/bin/readlink -f "$0"))' /opt/bin/run_clair3.sh && \
 sed -i '410s/^/# /' /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl && \
