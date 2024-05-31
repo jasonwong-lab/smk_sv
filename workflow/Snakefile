@@ -1,19 +1,27 @@
 import os
+from snakemake.utils import validate
 
 
-CALLERS = ["cutesv", "sniffles", "svim", "severus", "svision", "debreak", "delly", "nanosv", "nanovar"]
-
-
-MAPPERS = ["minimap2"]
-
-
-TYPES_SV = ["DEL", "DUP", "INS", "INV", "BND"]
+CALLERS = [
+    "cutesv",
+    "sniffles",
+    "svim",
+    "severus",
+    "svision",
+    "debreak",
+    "delly",
+    "nanosv",
+    "nanovar",
+]
 
 
 # *--------------------------------------------------------------------------* #
 # * Configuration                                                            * #
 # *--------------------------------------------------------------------------* #
 configfile: "../config/config.yaml"
+
+
+validate(config, "../config/config.schema.yaml")
 
 
 pepfile: "../config/pep/config.yaml"
@@ -57,9 +65,9 @@ for caller in CALLERS:
         include: f"rules/callers/{caller}.smk"
 
 
-include: "rules/filter_sv.smk"
-include: "rules/split_vcf.smk"
-include: "rules/annotate_sv.smk"
+# include: "rules/filter_sv.smk"
+# include: "rules/split_vcf.smk"
+# include: "rules/annotate_sv.smk"
 include: "rules/merge_sv.smk"
 include: "rules/extract_annotation.smk"
 include: "rules/convert_annotation.smk"

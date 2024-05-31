@@ -75,7 +75,9 @@ flowchart TD
 
 1. **Ensure you have clonned this repo and navigated to the directory `workflow`.**
 
-   Note: All steps below should be followed after you are in the `workflow` dir.
+   Note:
+      - Follow all steps below after you are in the `workflow` dir.
+      - Uncomment all rules in the `Snakefile`.
 
 2. **Build a `apptainer` sandbox**:
 
