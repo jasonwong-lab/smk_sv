@@ -75,7 +75,7 @@ flowchart TD
 
 1. **Ensure you have clonned this repo and navigated to the directory `workflow`.**
 
-   *Note: All steps below should be followed after you are in the `workflow` dir.*
+   Note: All steps below should be followed after you are in the `workflow` dir.
 
 2. **Build a `apptainer` sandbox**:
 
@@ -92,35 +92,34 @@ flowchart TD
    singularity build --sandbox singularities/sv scripts/container/sv.def
    ```
 
-   *Note: A Dockerfile is also provided in the directory `scripts/container/`.*
+   Note:
+      - A Dockerfile is also provided in the directory `scripts/container/`.
+      - The container size could be large (~ 10GB).*
 
-3. ~~There are some tools not included in the container, *e.g.*, [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html), [SnpEff](http://pcingola.github.io/SnpEff/), [vcf2maf](https://github.com/mskcc/vcf2maf), and some R packages, since one might have particular resources for annotating already. Thus, **you should install these missing tools manually**.~~
 
-   They are included in the image now. However, the image size would be larger (~ 9GB).
+3. For SV annotation, VEP and SnpEff are included in the container, but **you should install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself** because it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
 
-   *Note: When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv_snpeffnvep`. Don't forget to make `vep` executable in your environment.*
+   Note:
+      - Creating a lock file for each combination of sample/type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, you can add `threads: workflow.cores` to the rule `annotate_sv_annotsv` to ensure that only one instance of this rule runs at a time.
+      - When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv_snpeffnvep`. Don't forget to make `vep` executable in your environment.
 
-4. **You should install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself**, as it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
+4. **Modify the `../config/config.yaml`** to specify needed file paths.
 
-   *Note: Creating a lock file for each combination of sample/type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, you can add `threads: workflow.cores` to the rule `annotate_sv_annotsv` to ensure that only one instance of this rule runs at a time.*
+   Note: You must change the file paths specified in the config.
 
-5. **Modify the `../config/config.yaml`** to specify needed file paths.
+5. **Modify the column `sample_name` of `../config/pep/samples.csv`.**
 
-   *Note: You must change the file paths specified in the config.*
+   Note:
+      - Only `sample_name` in the table will be used.
+      - More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
 
-6. **Modify the column `sample_name` of `../config/pep/samples.csv`.**
-
-   *Note: Only `sample_name` in the table will be used.*
-
-   *More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).*
-
-7. **Modify the `profiles/default/config.yaml`** to:
+6. **Modify the `profiles/default/config.yaml`** to:
 
    - bind directories you need in the container.
    - change the number of CPUs you prefer.
    - modify/add/delete other parameters of this snakemake pipeline.
 
-8. **Run the whole pipeline**:
+7. **Run the whole pipeline**:
 
    ```shell
    snakemake

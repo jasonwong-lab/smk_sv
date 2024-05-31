@@ -1,20 +1,13 @@
 import os
 
 
-CALLERS = [
-    "cutesv",
-    "sniffles",
-    "svim",
-    "severus",
-    "svision",
-    "debreak",
-    "delly",
-    "nanosv",
-    "nanovar",
-]
+CALLERS = ["cutesv", "sniffles", "svim", "severus", "svision", "debreak", "delly", "nanosv", "nanovar"]
 
 
 MAPPERS = ["minimap2"]
+
+
+TYPES_SV = ["DEL", "DUP", "INS", "INV", "BND"]
 
 
 # *--------------------------------------------------------------------------* #
@@ -45,7 +38,7 @@ rule all:
     input:
         output_required=expand(
             "survivor/{sample}/final/{sample}.{type_sv}.merged.vcf",
-            sample="test", # pep.sample_table["sample_name"],
+            sample=pep.sample_table["sample_name"],
             type_sv=config["type_sv"],
         ),
 
