@@ -98,6 +98,7 @@
       },
       "minProperties": 1
     },
+    "terms_relative": { "type": "string", "minLength": 1 },
     "genome": { "type": "string", "minLength": 1, "enum": ["GRCh37", "GRCh38"] },
     "version_cache_snpeff": { "type": "integer" },
     "version_cache_vep": { "type": "integer" },

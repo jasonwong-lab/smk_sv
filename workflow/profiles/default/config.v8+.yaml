@@ -1,7 +1,0 @@
-snakefile: Snakefile
-printshellcmds: True
-keep-incomplete: True
-software-deployment-method:
-  - apptainer
-cores: all
-apptainer-args: "--bind /storage5,/storage2,/home/mjhk"

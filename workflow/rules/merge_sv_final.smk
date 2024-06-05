@@ -1,5 +1,5 @@
 rule merge_sv_filtered_annotation_survivor:
-    priority: 1
+    priority: 10
     input:
         vcfs=expand(
             "{caller}/{{sample}}/merged/filtered/{caller}.{{type_sv}}.snpeff.vep.vcf",

@@ -14,5 +14,7 @@ rule filter_sv_annotation:
     params:
         libs_r=config["libs_r"],
         caller=config["caller"],
+        terms_relative=config["terms_relative"],
+    threads: config["threads"]
     script:
         "../scripts/filter_sv_annotation.R"

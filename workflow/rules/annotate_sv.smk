@@ -29,7 +29,8 @@ rule annotate_sv_annotsv:
         tsv=touch(protected("{caller}/{sample}/{caller}.{type_sv}.annotsv.tsv")),
     params:
         genome=config["genome"],
-    threads: workflow.cores
+    resources:
+        constraint_annotsv=1,
     log:
         "logs/{sample}/annotate_sv_annotsv.{caller}.{type_sv}.log",
     script:
