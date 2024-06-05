@@ -144,7 +144,7 @@ filter_vep <- function(v, maf_vep, t) {
     unique()
 
   # min_qual <- switch(t, cutesv = 5, severus = 20, sniffles = 20, svim = 5, svision = 20)
-  min_qual <- switch(t, cutesv = 0, severus = 0, sniffles = 0, svim = 0, svision = 0)
+  min_qual <- switch(t, cutesv = 0, severus = 0, sniffles = 0, svim = 0, svision = 0, 0)
 
   id_exclude <- switch(v,
     BND = {
@@ -215,7 +215,7 @@ filter_snpeff <- function(v, tsv_snpeff, t) {
     unique()
 
   # min_qual <- switch(t, cutesv = 5, severus = 20, sniffles = 20, svim = 5, svision = 20)
-  min_qual <- switch(t, cutesv = 0, severus = 0, sniffles = 0, svim = 0, svision = 0)
+  min_qual <- switch(t, cutesv = 0, severus = 0, sniffles = 0, svim = 0, svision = 0, 0)
 
   id_exclude <- switch(v,
     BND = {
