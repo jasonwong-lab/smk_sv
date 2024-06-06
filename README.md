@@ -75,41 +75,41 @@ flowchart TD
 
 ## Usage
 
-1. **Ensure you have clonned this repo and navigated to the directory `workflow`.**
+1. **Ensure you have clonned this repo and navigated into it.**
 
    Note:
-      - Follow all steps below after you are in the `workflow` dir.
+      - Follow all steps below after you are in the top dir of this repo.
       - Uncomment all rules in the `Snakefile`.
       - Check the predefined `wildcards_constraints` in the `Snakefile` and modify/delete it if necessary.
-      - Using a JSON schema to validate the configuration file might prevent Snakemake from monitoring changes to the parameters. You can comment the `validate(config, "../config/config.schema.json")` in the `Snakefile`.
+      - Using a JSON schema to validate the configuration file might prevent Snakemake from monitoring changes to the parameters. You can comment the `validate(config, "config/config.schema.json")` in the `Snakefile`.
 
 2. **Build an `apptainer` sandbox**:
 
    ```shell
    mkdir singularities
-   singularity pull singularities/sv.sif docker://mhjiang97/sv:latest
-   singularity build --sandbox singularities/sv singularities/sv.sif
+   singularity pull workflow/singularities/sv.sif docker://mhjiang97/sv:latest
+   singularity build --sandbox workflow/singularities/sv workflow/singularities/sv.sif
    ```
 
    **Or build it from the def file** (You might need `--fakeroot` to build from a singularity def file):
 
    ```shell
    mkdir singularities
-   singularity build --sandbox singularities/sv scripts/container/sv.def
+   singularity build --sandbox workflow/singularities/sv workflow/scripts/container/sv.def
    ```
 
    Note:
-      - A Dockerfile is also provided in the directory `scripts/container/`.
+      - A Dockerfile is also provided in the directory `workflow/scripts/container/`.
       - The container size could be large (~ 10GB).
 
 
 3. For SV annotation, VEP and SnpEff are included in the container, but **you should install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself** because it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
 
    Note:
-      - Creating a lock file for each combination of sample/type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `profile/default/config.yaml` where its default is `1`.
+      - Creating a lock file for each combination of sample/type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `workflow/profile/default/config.yaml` where its default is `1`.
       - When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv_snpeffnvep`. Don't forget to make `vep` executable in your environment.
 
-4. **Modify the `../config/config.yaml`**.
+4. **Modify the `config/config.yaml`**.
 
    Specification of important elements:
       - `dir_run`: working directory where all results will be stored.
@@ -121,13 +121,13 @@ flowchart TD
 
    Note: You must change the file paths specified in the config.
 
-5. **Modify the column `sample_name` of `../config/pep/samples.csv`.**
+5. **Modify the column `sample_name` of `config/pep/samples.csv`.**
 
    Note:
       - Only `sample_name` in the table will be used.
       - More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
 
-6. **Modify the `profiles/default/config.yaml`** to:
+6. **Modify the `workflow/profiles/default/config.yaml`** to:
 
    - bind directories you need in the container.
    - change the number of CPUs you prefer.
@@ -152,7 +152,7 @@ flowchart TD
    snakemake
    ```
 
-   You can refer to the profile I have been using at `profiles/mycluster`, or turn to snakemake websites.
+   You can refer to the profile I have been using at `workflow/profiles/mycluster`, or turn to snakemake websites.
 
 ## License
 

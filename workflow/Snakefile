@@ -21,16 +21,16 @@ MAPPERS = ["minimap2"]
 # *--------------------------------------------------------------------------* #
 # * Configuration                                                            * #
 # *--------------------------------------------------------------------------* #
-configfile: "../config/config.yaml"
+configfile: "config/config.yaml"
 
 
-# validate(config, "../config/config.schema.json")
+# validate(config, "config/config.schema.json")
 
 
-pepfile: "../config/pep/config.yaml"
+pepfile: "config/pep/config.yaml"
 
 
-container: os.path.abspath("singularities/sv")
+container: os.path.abspath("workflow/singularities/sv")
 
 
 wildcard_constraints:
