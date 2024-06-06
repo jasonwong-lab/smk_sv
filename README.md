@@ -1,5 +1,7 @@
 # A snakemake pipeline to call structural variants from ONT data
 
+***Note: This pipeline is in its early stages. Please use with caution.***
+
 ## Author
 
 Minghao Jiang, <jiang01@icloud.com>
