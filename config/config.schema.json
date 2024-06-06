@@ -2,9 +2,13 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "dir_run": { "type": "string", "default": "./" },
-    "map_fastq": { "type": "boolean", "default": false },
-    "mapper": { "type": "string", "minLength": 1, "enum": ["minimap2"], "default": "minimap2"},
+    "mapper": {
+      "type": "object",
+      "properties": {
+        "minimap2": { "type": "boolean", "default": false }
+      },
+      "minProperties": 1
+    },
     "caller": {
       "type": "object",
       "properties": {
