@@ -15,6 +15,9 @@ CALLERS = [
 ]
 
 
+MAPPERS = ["minimap2"]
+
+
 # *--------------------------------------------------------------------------* #
 # * Configuration                                                            * #
 # *--------------------------------------------------------------------------* #
@@ -56,9 +59,12 @@ rule all:
 # *--------------------------------------------------------------------------* #
 # * All included rules                                                       * #
 # *--------------------------------------------------------------------------* #
-if config["map_fastq"] and config["mapper"] in MAPPERS:
+mapper = list(config["mapper"].keys())[0]
 
-    include: f"rules/mappers/{config['mapper']}.smk"
+
+if mapper in MAPPERS and config["mapper"][mapper]:
+
+    include: f"rules/mappers/{mapper}.smk"
 
 
 for caller in CALLERS:
@@ -67,9 +73,9 @@ for caller in CALLERS:
         include: f"rules/callers/{caller}.smk"
 
 
-# include: "rules/filter_sv.smk"
-# include: "rules/split_vcf.smk"
-# include: "rules/annotate_sv.smk"
+include: "rules/filter_sv.smk"
+include: "rules/split_vcf.smk"
+include: "rules/annotate_sv.smk"
 include: "rules/merge_sv.smk"
 include: "rules/extract_annotation.smk"
 include: "rules/convert_annotation.smk"
