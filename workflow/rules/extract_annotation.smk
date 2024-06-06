@@ -32,7 +32,7 @@ rule extract_annotation:
         #     }}' \\
         # > {output.tab}
 
-        caller_column=$(python -c "callers = \\"${{caller}}\\".split(); map_caller_column = {{callers[i]: i+5 for i in range(len(callers))}}; print(map_caller_column['{wildcards.caller}'])")
+        caller_column=$(python -c "callers = \\"${{caller[*]}}\\".split(); map_caller_column = {{callers[i]: i+5 for i in range(len(callers))}}; print(map_caller_column['{wildcards.caller}'])")
 
         bcftools query -f'%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%ID]' {input.vcf_merged} \\
             | awk -F'\\t' -v OFS='\\t' '{{
