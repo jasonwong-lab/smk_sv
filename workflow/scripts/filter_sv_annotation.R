@@ -12,7 +12,7 @@ vcf <- snakemake@input[["vcf"]]
 vcf_final <- snakemake@output[["vcf_final"]]
 ids_tmp <- snakemake@output[["ids"]]
 table_tsv <- snakemake@output[["table"]]
-caller <- sort(names(snakemake@params[["caller"]]))
+caller <- sort(snakemake@params[["caller"]])
 terms_relative <- snakemake@params[["terms_relative"]]
 threads <- snakemake@threads
 

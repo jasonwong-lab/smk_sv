@@ -8,7 +8,7 @@ rule extract_annotation:
         ids=touch(temp("survivor/{sample}/{caller}.{type_sv}.id")),
         vcf_extracted="{caller}/{sample}/merged/{caller}.{type_sv}.snpeff.vep.vcf",
     params:
-        caller=config["caller"],
+        caller=list(config["caller"].keys()),
     log:
         "logs/{sample}/extract_annotation.{caller}.{type_sv}.log",
     shell:
@@ -36,6 +36,7 @@ rule extract_annotation:
 
         bcftools query -f'%CHROM\\t%POS\\t%REF\\t%ALT[\\t%SAMPLE=%ID]' {input.vcf_merged} \\
             | awk -F'\\t' -v OFS='\\t' '{{
+                printf "%s\\t%s\\t%s\\t%s\\t", $1, $2, $3, $4
                 for (i = 5; i <= NF; i++) {{
                     split($i, arr, "=");
                     printf "%s\\t", arr[2]

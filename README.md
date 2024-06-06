@@ -109,7 +109,15 @@ flowchart TD
       - Creating a lock file for each combination of sample/type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `profile/default/config.yaml` where its default is `1`.
       - When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv_snpeffnvep`. Don't forget to make `vep` executable in your environment.
 
-4. **Modify the `../config/config.yaml`** to specify needed file paths.
+4. **Modify the `../config/config.yaml`**.
+
+   Specification of important elements:
+      - `dir_run`: working directory where all results will be stored.
+      - `mapper`: dict whose keys are names of mappers and values (boolean) indicate whether perform mapping or not. Only the first mapper will be used.
+      - `caller`: dict whose keys are names of callers and values (boolean) indicate whether perform SV calling using this caller or not.
+      - `type_sv`: SV types to be called. BND indicates translocations.
+      - `threads`: number of CPUs of each rule to be used.
+      - ...
 
    Note: You must change the file paths specified in the config.
 
@@ -131,13 +139,13 @@ flowchart TD
    snakemake
    ```
 
-   If you want to run this pipeline on a cluster (e.g., SLURM, or PBS), you should customise your own profile and place it into `~/.config/snakemake/`, and then run the pipeline:
+   If you want to run this pipeline on a cluster (e.g., SLURM, or PBS), you should customise your own profile and place it into `~/.config/snakemake/`, and then run the pipeline with the profile you have set as a parameter:
 
    ```shell
    snakemake --profile <your_profile_name>
    ```
 
-   Or run the pipeline:
+   Or run the pipeline with the profile you have set as an environment variable:
 
    ```shell
    export SNAKEMAKE_PROFILE=<your_profile_name>

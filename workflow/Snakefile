@@ -73,9 +73,9 @@ for caller in CALLERS:
         include: f"rules/callers/{caller}.smk"
 
 
-include: "rules/filter_sv.smk"
-include: "rules/split_vcf.smk"
-include: "rules/annotate_sv.smk"
+# include: "rules/filter_sv.smk"
+# include: "rules/split_vcf.smk"
+# include: "rules/annotate_sv.smk"
 include: "rules/merge_sv.smk"
 include: "rules/extract_annotation.smk"
 include: "rules/convert_annotation.smk"
