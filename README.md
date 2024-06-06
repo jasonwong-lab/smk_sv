@@ -86,7 +86,7 @@ flowchart TD
 2. **Build an `apptainer` sandbox**:
 
    ```shell
-   mkdir singularities
+   mkdir workflow/singularities
    singularity pull workflow/singularities/sv.sif docker://mhjiang97/sv:latest
    singularity build --sandbox workflow/singularities/sv workflow/singularities/sv.sif
    ```
@@ -94,7 +94,7 @@ flowchart TD
    **Or build it from the def file** (You might need `--fakeroot` to build from a singularity def file):
 
    ```shell
-   mkdir singularities
+   mkdir workflow/singularities
    singularity build --sandbox workflow/singularities/sv workflow/scripts/container/sv.def
    ```
 
