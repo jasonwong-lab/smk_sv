@@ -38,8 +38,9 @@ rule extract_annotation:
             | awk -F'\\t' -v OFS='\\t' '{{
                 for (i = 5; i <= NF; i++) {{
                     split($i, arr, "=");
-                    print arr[2]
+                    printf "%s\\t", arr[2]
                 }}
+                printf "\\n"
             }}' \\
         > {output.tab}
 
