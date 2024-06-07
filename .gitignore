@@ -6,6 +6,7 @@ workflow/singularities/
 config/config.yaml
 config/pep/config.yaml
 config/pep/samples.csv
+workflow/profiles/default/config.yaml
 
 ##### notebook ####
 *.bundle.*
