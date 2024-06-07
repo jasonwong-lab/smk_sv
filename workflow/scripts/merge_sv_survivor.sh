@@ -10,7 +10,7 @@ tab_rename="${snakemake_output[tab_rename]}"
 vcf_merged="${snakemake_output[vcf_merged]}"
 
 min_length_sv="${snakemake_params[min_length_sv]}"
-caller="${snakemake_params[caller]}"
+callers="${snakemake_params[callers]}"
 merge_distance_sv="${snakemake_params[merge_distance_sv]}"
 merge_nbr_callers="${snakemake_params[merge_nbr_callers]}"
 merge_type_sv="${snakemake_params[merge_type_sv]}"
@@ -23,12 +23,9 @@ sample="${snakemake_wildcards[sample]}"
 type_sv="${snakemake_wildcards[type_sv]}"
 
 
-{ IFS=" " read -r -a caller_unsorted <<< "${caller}"
-list_string=$(printf "%s\n" "${caller_unsorted[@]}")
-mapfile -t caller < <(echo "${list_string}" | sort)
-# for clr in "${caller[@]}"; do
-#     realpath "${clr}"/"${sample}"/"${clr}"."${type_sv}".vcf
-# done > "${list_vcfs}"
+{ IFS=" " read -r -a callers_unsorted <<< "${callers}"
+list_string=$(printf "%s\n" "${callers_unsorted[@]}")
+mapfile -t callers < <(echo "${list_string}" | sort)
 
 IFS=" " read -r -a vcfs_unsorted <<< "${vcfs}"
 list_string=$(printf "%s\n" "${vcfs_unsorted[@]}")
@@ -40,8 +37,8 @@ formula=("${merge_distance_sv}" "${merge_nbr_callers}" "${merge_type_sv}" "${mer
 
 SURVIVOR merge "${list_vcfs}" "${formula[@]}" "${vcf_merged_tmp}"
 
-for i in "${!caller[@]}"; do
-    line="${sample}_${i}\t${sample}_${caller[${i}]}\n"
+for i in "${!callers[@]}"; do
+    line="${sample}_${i}\t${sample}_${callers[${i}]}\n"
     output+=$line
 done
 echo -e "${output}" | sed 's/^ *//' | sed 's/_0//' > "${tab_rename}"

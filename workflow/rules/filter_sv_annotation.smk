@@ -13,7 +13,7 @@ rule filter_sv_annotation:
         table="{caller}/{sample}/merged/filtered/{caller}.{type_sv}.tsv",
     params:
         libs_r=config["libs_r"],
-        caller=list(config["caller"].keys()),
+        callers=list(config["callers"].keys()),
         terms_relative=config["terms_relative"],
     threads: config["threads"]
     script:

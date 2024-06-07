@@ -51,8 +51,8 @@ rule all:
     input:
         output_required=expand(
             "survivor/{sample}/final/{sample}.{type_sv}.merged.vcf",
-            sample=pep.sample_table["sample_name"],
-            type_sv=config["type_sv"],
+            sample="XWL", # pep.sample_table["sample_name"],
+            type_sv=config["types_sv"],
         ),
 
 
@@ -68,7 +68,7 @@ if mapper in MAPPERS and config["mapper"][mapper]:
 
 
 for caller in CALLERS:
-    if caller in config["caller"] and config["caller"][caller]:
+    if caller in config["callers"] and config["callers"][caller]:
 
         include: f"rules/callers/{caller}.smk"
 

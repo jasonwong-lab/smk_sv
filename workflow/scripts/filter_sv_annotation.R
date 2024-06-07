@@ -12,7 +12,7 @@ vcf <- snakemake@input[["vcf"]]
 vcf_final <- snakemake@output[["vcf_final"]]
 ids_tmp <- snakemake@output[["ids"]]
 table_tsv <- snakemake@output[["table"]]
-caller <- sort(snakemake@params[["caller"]])
+callers <- sort(snakemake@params[["callers"]])
 terms_relative <- snakemake@params[["terms_relative"]]
 threads <- snakemake@threads
 
@@ -21,7 +21,7 @@ annotsv <- file_annotsv |>
   my_vroom(n_col = 120, quote = "\'")
 id_info <- file_tab |>
   my_vroom(col_names = FALSE) |>
-  setNames(c("chr", "pos", "ref", "alt", caller))
+  setNames(c("chr", "pos", "ref", "alt", callers))
 if (nrow(annotsv) != 0) {
   tsv_annotsv <- annotsv |>
     dplyr::filter(ID %in% na.omit(id_info[[t]])) |>

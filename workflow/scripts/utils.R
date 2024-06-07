@@ -79,25 +79,6 @@ add_overlap_annotsv <- function(tsv, workers = detectCores()) {
   tsv
 }
 
-# add_overlap_annotsv <- function(tsv) {
-#   columns <- c("B_gain_coord", "B_loss_coord", "po_B_loss_allG_coord", "B_ins_coord", "po_B_gain_allG_coord", "B_inv_coord")
-#   pct_columns <- c("pct_gain", "pct_loss", "pct_po_loss", "pct_ins", "pct_po_gain", "pct_inv")
-#   for (i in seq_along(pct_columns)) {
-#     tsv[[pct_columns[i]]] <- rep(0, nrow(tsv))
-#   }
-#   pb <- txtProgressBar(min = 0, max = nrow(tsv), style = 3)
-#   for (i in seq_len(nrow(tsv))) {
-#     gr_sv <- GRanges(seqnames = as.character(tsv$SV_chrom[i]), ranges = IRanges(as.numeric(tsv$SV_start[i]), as.numeric(tsv$SV_end[i])))
-
-#     for (j in seq_along(columns)) {
-#       tsv[[pct_columns[j]]][i] <- calculate_overlap(tsv[[columns[j]]][i], gr_sv)
-#     }
-#     setTxtProgressBar(pb, i)
-#   }
-#   close(pb)
-#   tsv
-# }
-
 # *--------------------------------------------------------------------------* #
 # * QUAL Filtration - Decided not to do this finally                         * #
 # * SVision: SV quality of the SV described in this region                   * #

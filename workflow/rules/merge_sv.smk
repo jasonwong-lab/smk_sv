@@ -2,7 +2,7 @@ rule merge_sv_survivor:
     input:
         vcfs=expand(
             "{caller}/{{sample}}/{caller}.{{type_sv}}.vcf",
-            caller=config["caller"],
+            caller=list(config["callers"].keys()),
         ),
     output:
         list_vcfs="survivor/{sample}/vcfs.{type_sv}.list",
@@ -11,7 +11,7 @@ rule merge_sv_survivor:
         vcf_merged="survivor/{sample}/{sample}.{type_sv}.merged.vcf",
     params:
         min_length_sv=config["min_length_sv"],
-        caller=list(config["caller"].keys()),
+        callers=list(config["callers"].keys()),
         merge_distance_sv=lambda wildcards: config["merge_distance_sv"][wildcards.type_sv],
         merge_nbr_callers=lambda wildcards: config["merge_nbr_callers"][wildcards.type_sv],
         merge_type_sv=lambda wildcards: 1 if config["merge_type_sv"][wildcards.type_sv] else 0,
