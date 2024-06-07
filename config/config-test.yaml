@@ -1,0 +1,79 @@
+# *--------------------------------------------------------------------------* #
+# * All paths should be absolute paths                                       * #
+# *                                                                          * #
+# * Callers must be sorted alphabetically                                    * #
+# *                                                                          * #
+# * Only the first mapper will be used                                       * #
+# *--------------------------------------------------------------------------* #
+
+dir_run: /home/user/projects/SV/analysis/wgs
+mapper:
+  minimap2: !!bool true
+callers:
+  cutesv: !!bool true
+  severus: !!bool true
+  sniffles: !!bool true
+  svim: !!bool true
+  svision: !!bool true
+types_sv:
+  - BND
+  - DEL
+  - INS
+  - INV
+  - DUP
+threads: !!int 10
+libs_r:
+  - /home/user/doc/R/Rlibrary4
+fasta: /home/user/doc/reference/fasta/GRCh37.primary_assembly.genome.fa
+index_minimap2: /home/user/doc/reference/minimap2/GRCh37.primary_assembly.genome.mmi
+dir_data: /home/user/projects/SV/data/wgs
+suffix_fastq: fq.gz
+bed_tandem_repeats: /home/user/doc/sniffles/human_hs37d5.trf.chr.bed
+min_num_reads: !!int 3
+min_length_reads: !!int 1000
+min_quality_mapping: !!int 20
+min_coverage: !!int 6
+min_length_sv: !!int 100
+min_dhffc: !!float 0.7
+max_dhbfc: !!float 1.3
+merge_distance_sv:
+  BND: !!int 10
+  DEL: !!int 10
+  INS: !!int 10
+  INV: !!int 10
+  DUP: !!int 10
+merge_nbr_callers:
+  BND: !!int 3
+  DEL: !!int 3
+  INS: !!int 3
+  INV: !!int 3
+  DUP: !!int 3
+merge_type_sv:
+  BND: !!bool false
+  DEL: !!bool false
+  INS: !!bool false
+  INV: !!bool false
+  DUP: !!bool false
+merge_strand:
+  BND: !!bool false
+  DEL: !!bool false
+  INS: !!bool false
+  INV: !!bool false
+  DUP: !!bool false
+merge_estimate_distance:
+  BND: !!bool true
+  DEL: !!bool true
+  INS: !!bool true
+  INV: !!bool true
+  DUP: !!bool true
+terms_relative: leuka?emia|blood|lymph|myelo|ha?ema|marrow|platel|thrombo|anemia|neutro
+genome: GRCh37
+version_cache_snpeff: 87
+version_cache_vep: 111
+dir_db_snpeff: /home/user/doc/snpeff
+dir_db_vep: /home/user/.vep
+config_nanosv: /home/user/doc/nanosv/config.ini
+bed_nanosv: /home/user/opt/nanosv/nanosv/bedfiles/hg19_genome_sample.bed
+model_clair3: /home/user/doc/clair3/models/r941_prom_sup_g5014
+bed_nvtr: /home/user/doc/sniffles/human_hs37d5.trf.chr.bed
+model_svision: /home/user/doc/svision/svision-cnn-model.ckpt
