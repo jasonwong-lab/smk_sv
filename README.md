@@ -22,7 +22,7 @@ Minghao Jiang, <jiang01@icloud.com>
 
 - Other tools
 
-   [Minimap2](https://github.com/lh3/minimap2), [SAMtools](https://github.com/samtools/samtools), [BCFtools](http://samtools.github.io/bcftools/bcftools.html), [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR), [vcf2maf](https://github.com/mskcc/vcf2maf), [SnpSift](http://pcingola.github.io/SnpEff/snpsift/introduction/)
+   [Minimap2](https://github.com/lh3/minimap2), [SAMtools](https://github.com/samtools/samtools), [BCFtools](http://samtools.github.io/bcftools/bcftools.html), [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR), [vcf2maf](https://github.com/mskcc/vcf2maf) (1.6.21), [SnpSift](http://pcingola.github.io/SnpEff/snpsift/introduction/)
 
 ## Pipeline structure
 
@@ -109,25 +109,25 @@ flowchart TD
       - Creating a lock file for each combination of sample/type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `workflow/profile/default/config.yaml` where its default is `1`.
       - When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv_snpeffnvep`. Don't forget to make `vep` executable in your environment.
 
-4. **Modify the `config/config.yaml`**.
+4. **Create `config/config.yaml` from `config/config-test.yaml`**.
 
    Specification of important elements:
       - `dir_run`: working directory where all results will be stored.
-      - `mapper`: dict whose keys are names of mappers and values (boolean) indicate whether perform mapping or not. Only the first mapper will be used.
-      - `caller`: dict whose keys are names of callers and values (boolean) indicate whether perform SV calling using this caller or not.
-      - `type_sv`: SV types to be called. BND indicates translocations.
+      - `mapper`: dict whose keys are names of mappers and values (boolean) indicate whether perform mapping or not. Only the first mapper will be used. When a mapper is specified and its value is `false`, no mapping by this mapper will be performed, but its results will be used in the following steps.
+      - `callers`: dict whose keys are names of callers and values (boolean) indicate whether perform SV calling using this caller or not. When a caller is specified and its value is `false`, no SV calling by this caller will be performed, but its results will be used in the following steps.
+      - `types_sv`: SV types to be called. BND indicates translocations.
       - `threads`: number of CPUs of each rule to be used.
       - ...
 
    Note: You must change the file paths specified in the config.
 
-5. **Modify the column `sample_name` of `config/pep/samples.csv`.**
+5. **Create `config/pep/samples.csv` and `config/pep/config.yaml` from `config/pep/samples-test.csv` and `config/pep/config-test.yaml`.**
 
    Note:
       - Only `sample_name` in the table will be used.
       - More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
 
-6. **Modify the `workflow/profiles/default/config.yaml`** to:
+6. **Create `workflow/profiles/default/config.yaml` from `workflow/profiles/default/config-test.yaml`** to:
 
    - bind directories you need in the container.
    - change the number of CPUs you prefer.

@@ -51,7 +51,7 @@ rule all:
     input:
         output_required=expand(
             "survivor/{sample}/final/{sample}.{type_sv}.merged.vcf",
-            sample="XWL", # pep.sample_table["sample_name"],
+            sample=pep.sample_table["sample_name"],
             type_sv=config["types_sv"],
         ),
 
@@ -73,9 +73,9 @@ for caller in CALLERS:
         include: f"rules/callers/{caller}.smk"
 
 
-# include: "rules/filter_sv.smk"
-# include: "rules/split_vcf.smk"
-# include: "rules/annotate_sv.smk"
+include: "rules/filter_sv.smk"
+include: "rules/split_vcf.smk"
+include: "rules/annotate_sv.smk"
 include: "rules/merge_sv.smk"
 include: "rules/extract_annotation.smk"
 include: "rules/convert_annotation.smk"
