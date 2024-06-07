@@ -1,0 +1,8 @@
+printshellcmds: True
+keep-incomplete: True
+software-deployment-method:
+  - apptainer
+cores: all
+resources:
+  constraint_annotsv: 1
+apptainer-args: "--bind /storage,/home/user"
