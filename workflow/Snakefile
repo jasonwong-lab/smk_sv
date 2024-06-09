@@ -1,22 +1,6 @@
 import os
+import math
 from snakemake.utils import validate
-
-
-CALLERS = [
-    "cutesv",
-    "sniffles",
-    "svim",
-    "severus",
-    "svision",
-    "debreak",
-    "delly",
-    "nanosv",
-    "nanovar",
-]
-
-
-MAPPERS = ["minimap2"]
-
 
 # *--------------------------------------------------------------------------* #
 # * Configuration                                                            * #
@@ -44,6 +28,31 @@ if config["dir_run"]:
     workdir: config["dir_run"]
 
 
+CALLERS = [
+    "cutesv",
+    "sniffles",
+    "svim",
+    "severus",
+    "svision",
+    "debreak",
+    "delly",
+    "nanosv",
+    "nanovar",
+]
+
+
+MAPPERS = ["minimap2"]
+
+
+SAMPLES = pep.sample_table["sample_name"]
+
+
+NUMBER_SAMPLES = len(SAMPLES)
+
+
+NUMBER_CALLERS = len(list(config["callers"].keys()))
+
+
 # *--------------------------------------------------------------------------* #
 # * Define results to be retrieved                                           * #
 # *--------------------------------------------------------------------------* #
@@ -51,7 +60,7 @@ rule all:
     input:
         output_required=expand(
             "survivor/{sample}/final/{sample}.{type_sv}.merged.vcf",
-            sample=pep.sample_table["sample_name"],
+            sample=SAMPLES,
             type_sv=config["types_sv"],
         ),
 

@@ -10,7 +10,7 @@ rule call_sv_sniffles:
         min_num_reads=config["min_num_reads"],
         min_quality_mapping=config["min_quality_mapping"],
         min_length_sv=config["min_length_sv"],
-    threads: config["threads"]
+    threads: math.floor(workflow.cores / NUMBER_SAMPLES / NUMBER_CALLERS)
     log:
         "logs/{sample}/call_sv_sniffles.log",
     shell:

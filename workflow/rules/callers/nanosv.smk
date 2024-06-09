@@ -7,7 +7,7 @@ rule call_sv_nanosv:
         vcf=protected("nanosv/{sample}/nanosv.vcf"),
         vcf_tmp=temp("nanosv/{sample}/nanosv.vcf.tmp"),
         tab_rename=temp("nanosv/{sample}/rename.tab"),
-    threads: config["threads"]
+    threads: math.floor(workflow.cores / NUMBER_SAMPLES / NUMBER_CALLERS)
     log:
         "logs/{sample}/call_sv_nanosv.log",
     shell:

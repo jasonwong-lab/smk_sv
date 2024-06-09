@@ -11,7 +11,7 @@ rule phasenhaplotag_bam_clair3:
         ),
     params:
         dir_out=directory("clair3/{sample}"),
-    threads: config["threads"]
+    threads: math.floor(workflow.cores / NUMBER_SAMPLES) # config["threads"]
     log:
         "logs/{sample}/phasenhaplotag_bam_clair3.log",
     shell:
@@ -51,7 +51,7 @@ rule call_sv_severus:
         min_num_reads=config["min_num_reads"],
         min_quality_mapping=config["min_quality_mapping"],
         min_length_sv=config["min_length_sv"],
-    threads: config["threads"]
+    threads: math.floor(workflow.cores / NUMBER_SAMPLES / NUMBER_CALLERS)
     log:
         "logs/{sample}/call_sv_severus.log",
     shell:
