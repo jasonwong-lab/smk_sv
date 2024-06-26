@@ -48,21 +48,28 @@ create_grs <- function(string) {
   as(string, "GRanges")
 }
 
-calculate_overlap <- function(coord, sv) {
+calculate_overlap_flag <- function(coord, sv) {
   gr <- str_replace_all(coord, "chr", "") |>
     str_split(";") |>
     unlist() |>
     create_grs()
-  pct <- max(width(pintersect(gr, sv)) / width(gr))
-  pct
+  # pct <- max(width(pintersect(gr, sv)) / width(gr))
+  # pct
+  pcts_gr <- width(pintersect(gr, sv)) / width(gr)
+  pcts_sv <- width(pintersect(gr, sv)) / width(sv)
+  any(pcts_gr >= 0.9 & pcts_sv >= 0.8)
 }
 
-add_overlap_annotsv <- function(tsv, workers = detectCores()) {
+add_overlap_flag_annotsv <- function(tsv, workers = detectCores()) {
   columns <- c("B_gain_coord", "B_loss_coord", "po_B_loss_allG_coord", "B_ins_coord", "po_B_gain_allG_coord", "B_inv_coord")
-  pct_columns <- c("pct_gain", "pct_loss", "pct_po_loss", "pct_ins", "pct_po_gain", "pct_inv")
+  # pct_columns <- c("pct_gain", "pct_loss", "pct_po_loss", "pct_ins", "pct_po_gain", "pct_inv")
+  flag_columns <- c("flag_gain", "flag_loss", "flag_po_loss", "flag_ins", "flag_po_gain", "flag_inv")
 
-  for (i in seq_along(pct_columns)) {
-    tsv[[pct_columns[i]]] <- rep(0, nrow(tsv))
+  # for (i in seq_along(pct_columns)) {
+  #   tsv[[pct_columns[i]]] <- rep(0, nrow(tsv))
+  # }
+  for (i in seq_along(flag_columns)) {
+    tsv[[flag_columns[i]]] <- rep(FALSE, nrow(tsv))
   }
 
   gr_sv <- GRanges(seqnames = as.character(tsv$SV_chrom), ranges = IRanges(as.numeric(tsv$SV_start), as.numeric(tsv$SV_end)))
@@ -70,8 +77,12 @@ add_overlap_annotsv <- function(tsv, workers = detectCores()) {
   register(MulticoreParam(workers = workers))
 
   for (j in seq_along(columns)) {
-    tsv[[pct_columns[j]]] <- bplapply(seq_len(nrow(tsv)), function(i) {
-      calculate_overlap(tsv[[columns[j]]][i], gr_sv[i])
+    # tsv[[pct_columns[j]]] <- bplapply(seq_len(nrow(tsv)), function(i) {
+    #   calculate_overlap(tsv[[columns[j]]][i], gr_sv[i])
+    # }) |>
+    #   unlist()
+    tsv[[flag_columns[j]]] <- bplapply(seq_len(nrow(tsv)), function(i) {
+      calculate_overlap_flag(tsv[[columns[j]]][i], gr_sv[i])
     }) |>
       unlist()
   }
@@ -273,35 +284,41 @@ filter_annotsv <- function(v, tsv_annotsv, terms_relative) {
     BND = {
       tsv_annotsv |>
         dplyr::filter(
-          as.numeric(B_gain_AFmax) >= 0.05 & as.numeric(B_loss_AFmax) >= 0.05 & pct_gain >= 0.9 & pct_loss >= 0.9
+          as.numeric(B_gain_AFmax) >= 0.05 & as.numeric(B_loss_AFmax) >= 0.05 &
+          flag_gain & flag_loss
+          # & pct_gain >= 0.9 & pct_loss >= 0.9
           # // !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(DDD_HI_percent) >= 95
         )
     },
     DEL = {
       tsv_annotsv |>
         dplyr::filter(
-          (as.numeric(B_loss_AFmax) >= 0.05 & pct_loss >= 0.9) | (!is.na(po_B_loss_allG_coord) & pct_po_loss >= 0.9)
+          (as.numeric(B_loss_AFmax) >= 0.05 & flag_loss) | (!is.na(po_B_loss_allG_coord) & flag_po_loss)
+          # (as.numeric(B_loss_AFmax) >= 0.05 & pct_loss >= 0.9) | (!is.na(po_B_loss_allG_coord) & pct_po_loss >= 0.9)
           # // !is.na(po_B_loss_someG_coord) | !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(ExAC_delZ) <= 0 | as.numeric(DDD_HI_percent) >= 90
         )
     },
     INS = {
       tsv_annotsv |>
         dplyr::filter(
-          (as.numeric(B_ins_AFmax) >= 0.05 & pct_ins >= 0.9) | (!is.na(po_B_gain_allG_coord) & pct_po_gain >= 0.9)
+          (as.numeric(B_ins_AFmax) >= 0.05 & flag_ins) | (!is.na(po_B_gain_allG_coord) & flag_po_gain)
+          # (as.numeric(B_ins_AFmax) >= 0.05 & pct_ins >= 0.9) | (!is.na(po_B_gain_allG_coord) & pct_po_gain >= 0.9)
           # // !is.na(po_B_loss_someG_coord) | !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(ExAC_cnvZ) <= 0 | as.numeric(DDD_HI_percent) >= 90
         )
     },
     INV = {
       tsv_annotsv |>
         dplyr::filter(
-          as.numeric(B_inv_AFmax) >= 0.05 & pct_inv >= 0.9
+          as.numeric(B_inv_AFmax) >= 0.05 & flag_inv
+          # as.numeric(B_inv_AFmax) >= 0.05 & pct_inv >= 0.9
           # // !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(DDD_HI_percent) >= 90
         )
     },
     DUP = {
       tsv_annotsv |>
         dplyr::filter(
-          (as.numeric(B_gain_AFmax) >= 0.05 & pct_gain >= 0.9) | (!is.na(po_B_gain_allG_coord) & pct_po_gain >= 0.9)
+          (as.numeric(B_gain_AFmax) >= 0.05 & flag_gain) | (!is.na(po_B_gain_allG_coord) & flag_po_gain)
+          # (as.numeric(B_gain_AFmax) >= 0.05 & pct_gain >= 0.9) | (!is.na(po_B_gain_allG_coord) & pct_po_gain >= 0.9)
           # // !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(DDD_HI_percent) >= 90
         )
     }

@@ -25,7 +25,7 @@ id_info <- file_tab |>
 if (nrow(annotsv) != 0) {
   tsv_annotsv <- annotsv |>
     dplyr::filter(ID %in% na.omit(id_info[[t]])) |>
-    add_overlap_annotsv(workers = threads)
+    add_overlap_flag_annotsv(workers = threads)
 } else {
   tsv_annotsv <- annotsv
 }

@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 import math
 from snakemake.utils import validate
 
@@ -14,7 +14,7 @@ configfile: "config/config.yaml"
 pepfile: "config/pep/config.yaml"
 
 
-container: os.path.abspath("workflow/singularities/sv")
+container: str(Path(config["container"]).expanduser().absolute())
 
 
 wildcard_constraints:
@@ -82,11 +82,11 @@ for caller in CALLERS:
         include: f"rules/callers/{caller}.smk"
 
 
-include: "rules/filter_sv.smk"
-include: "rules/split_vcf.smk"
-include: "rules/annotate_sv.smk"
-include: "rules/merge_sv.smk"
-include: "rules/extract_annotation.smk"
-include: "rules/convert_annotation.smk"
+# include: "rules/filter_sv.smk"
+# include: "rules/split_vcf.smk"
+# include: "rules/annotate_sv.smk"
+# include: "rules/merge_sv.smk"
+# include: "rules/extract_annotation.smk"
+# include: "rules/convert_annotation.smk"
 include: "rules/filter_sv_annotation.smk"
 include: "rules/merge_sv_final.smk"
