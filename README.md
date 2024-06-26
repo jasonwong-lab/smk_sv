@@ -92,9 +92,8 @@ flowchart TD
    mkdir -p ~/doc/singularity
    singularity build --sandbox ~/doc/singularity/sv workflow/scripts/container/sv.def
    ```
-   Note:
-      - A Dockerfile is also provided in the directory `workflow/scripts/container/`.
-      - The container size could be large (~ 10GB).
+   - A Dockerfile is also provided in the directory `workflow/scripts/container/`.
+   - The container size could be large (~ 10GB).
 
 3. For SV annotation, VEP and SnpEff are included in the container, but **you should install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself** because it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
    - Creating a lock file for each combination of sample/type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `workflow/profile/default/config.yaml` where its default is `1`.
