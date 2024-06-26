@@ -101,7 +101,7 @@ flowchart TD
 
 4. **Create `config/config.yaml` from `config/config-test.yaml`**.
 
-   Specification of important elements:
+   - Specification of important elements:
       - `container`: path to the container built in the step 2.
       - `dir_run`: working directory where all results will be stored.
       - `mapper`: dict whose keys are names of mappers and values (boolean) indicate whether perform mapping or not. Only the first mapper will be used. When a mapper is specified and its value is `false`, no mapping by this mapper will be performed, but its results will be used in the following steps.
@@ -109,11 +109,11 @@ flowchart TD
       - `types_sv`: SV types to be called. BND indicates translocations.
       - `threads`: number of CPUs of each rule to be used.
       - ...
-   Note: You must change the file paths specified in the config.
+   - You must change the file paths specified in the config.
 
 5. **Create `config/pep/samples.csv` and `config/pep/config.yaml` from `config/pep/samples-test.csv` and `config/pep/config-test.yaml`.**
-      - Only `sample_name` in the table will be used.
-      - More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
+   - Only `sample_name` in the table will be used.
+   - More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
 
 6. **Create `workflow/profiles/default/config.yaml` from `workflow/profiles/default/config-test.yaml`** to:
    - bind directories you need in the container.
