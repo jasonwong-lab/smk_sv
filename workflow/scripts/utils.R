@@ -284,8 +284,7 @@ filter_annotsv <- function(v, tsv_annotsv, terms_relative) {
     BND = {
       tsv_annotsv |>
         dplyr::filter(
-          as.numeric(B_gain_AFmax) >= 0.05 & as.numeric(B_loss_AFmax) >= 0.05 &
-          flag_gain & flag_loss
+          as.numeric(B_gain_AFmax) >= 0.05 & as.numeric(B_loss_AFmax) >= 0.05 & flag_gain & flag_loss
           # & pct_gain >= 0.9 & pct_loss >= 0.9
           # // !is.na(ENCODE_blacklist_left) | !is.na(ENCODE_blacklist_right) | as.numeric(DDD_HI_percent) >= 95
         )
