@@ -68,8 +68,9 @@ RUN rm /'=3.6' && \
     rm /opt/snpEff_latest_core.zip && \
     git clone https://github.com/Ensembl/ensembl-vep.git /opt/ensembl-vep && \
     cd /opt/ensembl-vep && \
+    git checkout release/111 && \
     /usr/bin/perl INSTALL.pl && \
-    conda create -n vcf2maf -c bioconda vcf2maf && \
+    conda create -n vcf2maf -c bioconda vcf2maf==1.6.21 && \
     conda clean -a && \
     apt-get clean && \
     rm -rf mskcc-vcf2maf.tar.gz && \
