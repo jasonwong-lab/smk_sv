@@ -14,7 +14,7 @@ Minghao Jiang, <jiang01@icloud.com>
 
 - Annotation tools
 
-   [AnnotSV](https://github.com/lgmgeo/AnnotSV), [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html), [SnpEff](http://pcingola.github.io/SnpEff/snpeff/introduction/)
+   [AnnotSV](https://github.com/lgmgeo/AnnotSV), [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html) (release/111), [SnpEff](http://pcingola.github.io/SnpEff/snpeff/introduction/)
 
 - R packages
 
