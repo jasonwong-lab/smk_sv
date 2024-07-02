@@ -22,7 +22,7 @@ rule call_sv_svim:
         --min_sv_size {params.min_length_sv} \\
         --minimum_depth {params.min_num_reads}
 
-        cd {params.dir_out} \\
+        cd {params.dir_out}
         ln -s variants.vcf $(basename {output.vcf})
 
         echo -e "[INFO] SVIM is done!"; }} \\
