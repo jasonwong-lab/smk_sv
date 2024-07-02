@@ -18,9 +18,9 @@ container: str(Path(config["container"]).expanduser().absolute())
 
 
 wildcard_constraints:
-    sample="\w+",
-    type_sv="\w+",
-    caller="\w+",
+    sample=r"\w+",
+    type_sv=r"\w+",
+    caller=r"\w+",
 
 
 if config["dir_run"]:
@@ -82,11 +82,11 @@ for caller in CALLERS:
         include: f"rules/callers/{caller}.smk"
 
 
-# include: "rules/filter_sv.smk"
-# include: "rules/split_vcf.smk"
-# include: "rules/annotate_sv.smk"
-# include: "rules/merge_sv.smk"
-# include: "rules/extract_annotation.smk"
-# include: "rules/convert_annotation.smk"
+include: "rules/filter_sv.smk"
+include: "rules/split_vcf.smk"
+include: "rules/annotate_sv.smk"
+include: "rules/merge_sv.smk"
+include: "rules/extract_annotation.smk"
+include: "rules/convert_annotation.smk"
 include: "rules/filter_sv_annotation.smk"
 include: "rules/merge_sv_final.smk"
