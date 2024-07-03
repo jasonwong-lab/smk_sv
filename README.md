@@ -95,9 +95,9 @@ flowchart TD
    ```shell
    snakemake --conda-create-envs-only
    ```
-   - A Dockerfile is also provided in the directory `workflow/scripts/container/`.
+   - A Dockerfile is also provided under `workflow/scripts/container/`.
 
-3. For SV annotation, VEP and SnpEff will be install accroding to `workflow/envs/annotator.yaml`, but **you have to install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself** because it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
+3. For SV annotation, VEP and SnpEff will be install in the conda environment, but **you have to install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself** because it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
    - Creating a lock file for each combination of sample and type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `workflow/profile/default/config.yaml` where its default is `1`.
    - When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv_snpeffnvep`. Don't forget to make `vep` executable in your environment.
 
