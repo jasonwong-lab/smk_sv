@@ -132,7 +132,7 @@ flowchart TD
    - Change the number of CPUs you prefer.
    - Modify/add/delete other parameters of this snakemake pipeline.
 
-8. **Run the whole pipeline:**
+8. **Run the whole pipeline.**
 
    ```shell
    snakemake
