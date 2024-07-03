@@ -21,7 +21,6 @@ rule phasenhaplotag_bam_clair3:
     shell:
         """
         {{ [ ! -f {input.fasta}.fai ] && samtools faidx {input.fasta}
-        source activate clair3
         run_clair3.sh \\
         --use_whatshap_for_final_output_haplotagging \\
         --use_whatshap_for_final_output_phasing \\
