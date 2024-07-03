@@ -2,6 +2,7 @@ printshellcmds: True
 keep-incomplete: True
 software-deployment-method:
   - apptainer
+  - conda
 cores: all
 resources:
   constraint_annotsv: 1

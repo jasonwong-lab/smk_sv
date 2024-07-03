@@ -70,7 +70,7 @@ EOF
             awk 'BEGIN {OFS=FS="\t"} !/^#/ {$4 = "N"; $5 = "<DEL>"} 1' "${input_snpeff}" > "${input_snpeff%.*}".4_5.vcf
             input_snpeff="${input_snpeff%.*}".4_5.vcf
         fi
-        snpeff -Xmx81920M "${genome_version}"."${version_snpeff}" -nodownload -canon -v -lof -s "${vcf_snpeff%.*}".html -dataDir "${dir_db_snpeff}" "${input_snpeff}" > "${vcf_snpeff}"
+        snpEff -Xmx81920M "${genome_version}"."${version_snpeff}" -nodownload -canon -v -lof -s "${vcf_snpeff%.*}".html -dataDir "${dir_db_snpeff}" "${input_snpeff}" > "${vcf_snpeff}"
     else
         echo "[INFO] SnpEff has annotated this VCF..."
     fi

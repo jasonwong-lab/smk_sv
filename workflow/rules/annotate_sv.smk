@@ -1,6 +1,8 @@
 rule annotate_sv_snpeffnvep:
     container:
         None
+    conda:
+        "../envs/annotator.yaml"
     input:
         vcf="{caller}/{sample}/{caller}.{type_sv}.vcf",
         fasta=config["fasta"],
