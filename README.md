@@ -74,13 +74,19 @@ flowchart TD
 
 ## Usage
 
-1. **Ensure you have clonned this repo and navigated into it:**
+1. **Ensure you have clonned this repo and navigated into it.**
+
+   ```shell
+   git clone https://github.com/jasonwong-lab/smk_sv.git
+   cd smk_sv
+   ```
+
    - Follow all steps below after you are in the top dir of this repo.
    - Uncomment all rules in the `Snakefile`.
    - Check the predefined `wildcards_constraints` in the `Snakefile` and modify/delete it if necessary.
    - Using a JSON schema to validate the configuration file might prevent Snakemake from monitoring changes to the parameters. You can comment the `validate(config, "config/config.schema.json")` in the `Snakefile`.
 
-2. **Build an `apptainer` sandbox:**
+2. **Build an `apptainer` sandbox.**
 
    ```shell
    mkdir -p ~/doc/singularity
@@ -95,7 +101,7 @@ flowchart TD
 
    - A Dockerfile is also provided under `workflow/scripts/container/`.
 
-3. **Create conda environments:**
+3. **Create conda environments.**
 
    ```shell
    snakemake --conda-create-envs-only
@@ -105,7 +111,7 @@ flowchart TD
    - Creating a lock file for each combination of sample and type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `workflow/profile/default/config.yaml` where its default is `1`.
    - When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv_snpeffnvep`. Don't forget to make `vep` executable in your environment.
 
-5. **Create `config/config.yaml` from `config/config-test.yaml`:**
+5. **Create `config/config.yaml` from `config/config-test.yaml`.**
 
    - Specification of important elements:
       - `container`: path to the container built in the step 2.
@@ -117,14 +123,14 @@ flowchart TD
       - ...
    - You must change the file paths specified in the config.
 
-6. **Create `config/pep/samples.csv` and `config/pep/config.yaml` from `config/pep/samples-test.csv` and `config/pep/config-test.yaml`:**
+6. **Create `config/pep/samples.csv` and `config/pep/config.yaml` from `config/pep/samples-test.csv` and `config/pep/config-test.yaml`.**
    - Only `sample_name` in the table will be used.
    - More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
 
-7. **Create `workflow/profiles/default/config.yaml` from `workflow/profiles/default/config-test.yaml` to :**
-   - bind directories you need in the container.
-   - change the number of CPUs you prefer.
-   - modify/add/delete other parameters of this snakemake pipeline.
+7. **Create `workflow/profiles/default/config.yaml` from `workflow/profiles/default/config-test.yaml`.**
+   - Bind directories you need in the container.
+   - Change the number of CPUs you prefer.
+   - Modify/add/delete other parameters of this snakemake pipeline.
 
 8. **Run the whole pipeline:**
 
