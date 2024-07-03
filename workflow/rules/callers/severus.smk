@@ -1,4 +1,8 @@
 rule phasenhaplotag_bam_clair3:
+    container:
+        None
+    conda:
+        "../../envs/clair3.yaml"
     input:
         bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],
@@ -39,6 +43,10 @@ rule phasenhaplotag_bam_clair3:
 
 
 rule call_sv_severus:
+    container:
+        None
+    conda:
+        "../../envs/severus.yaml"
     input:
         bam_haplotagged=ancient("minimap2/{sample}/{sample}.sorted.haplotagged.bam"),
         vcf_phased=ancient("clair3/{sample}/phased_merge_output.vcf.gz"),

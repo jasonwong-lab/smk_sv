@@ -1,4 +1,8 @@
 rule call_sv_nanosv:
+    container:
+        None
+    conda:
+        "../../envs/nanosv.yaml"
     input:
         bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         bed_nanosv=config["bed_nanosv"],

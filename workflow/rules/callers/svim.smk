@@ -1,4 +1,8 @@
 rule call_sv_svim:
+    container:
+        None
+    conda:
+        "../../envs/svim.yaml"
     input:
         bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],

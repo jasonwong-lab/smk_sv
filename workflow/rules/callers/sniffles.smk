@@ -1,4 +1,8 @@
 rule call_sv_sniffles:
+    container:
+        None
+    conda:
+        "../../envs/sniffles.yaml"
     input:
         bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],

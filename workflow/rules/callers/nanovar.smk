@@ -1,4 +1,8 @@
 rule call_sv_nanovar:
+    container:
+        None
+    conda:
+        "../../envs/nanovar.yaml"
     input:
         bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],

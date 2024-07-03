@@ -1,4 +1,8 @@
 rule make_index_minimap2:
+    container:
+        None
+    conda:
+        "../../envs/minimap2.yaml"
     input:
         fasta=config["fasta"],
     output:
@@ -9,6 +13,10 @@ rule make_index_minimap2:
 
 
 rule map_minimap2:
+    container:
+        None
+    conda:
+        "../../envs/minimap2.yaml"
     input:
         index_minimap2=ancient(rules.make_index_minimap2.output.index_minimap2),
     output:

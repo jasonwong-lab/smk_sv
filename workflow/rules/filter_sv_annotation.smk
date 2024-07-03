@@ -1,5 +1,9 @@
 # TODO: need modification
 rule filter_sv_annotation:
+    container:
+        None
+    conda:
+        "../envs/r.yaml"
     input:
         annotsv="{caller}/{sample}/{caller}.{type_sv}.annotsv.tsv",
         maf="{caller}/{sample}/merged/{caller}.{type_sv}.snpeff.vep.maf",
