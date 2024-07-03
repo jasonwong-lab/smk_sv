@@ -1,6 +1,4 @@
 rule convert_annotation:
-    container:
-        None
     input:
         vcf_extracted="{caller}/{sample}/merged/{caller}.{type_sv}.snpeff.vep.vcf",
         fasta=config["fasta"],
