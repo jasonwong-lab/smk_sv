@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-To get the status of a job in the CPOS cluster
+To get the status of a job in the CPOS PBS cluster.
 """
 
 import sys
