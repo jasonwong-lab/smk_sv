@@ -1,4 +1,6 @@
 rule merge_sv_survivor:
+    conda:
+        "../envs/survivor.yaml"
     input:
         vcfs=expand(
             "{caller}/{{sample}}/{caller}.{{type_sv}}.vcf",

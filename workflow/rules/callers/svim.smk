@@ -1,6 +1,4 @@
 rule call_sv_svim:
-    container:
-        None
     conda:
         "../../envs/svim.yaml"
     input:

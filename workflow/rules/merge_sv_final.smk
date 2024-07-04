@@ -1,5 +1,7 @@
 rule merge_sv_filtered_annotation_survivor:
     priority: 10
+    conda:
+        "../envs/survivor.yaml"
     input:
         vcfs=expand(
             "{caller}/{{sample}}/merged/filtered/{caller}.{{type_sv}}.snpeff.vep.vcf",

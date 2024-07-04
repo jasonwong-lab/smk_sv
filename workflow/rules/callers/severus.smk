@@ -1,6 +1,4 @@
 rule phasenhaplotag_bam_clair3:
-    container:
-        None
     conda:
         "../../envs/clair3.yaml"
     input:
@@ -42,8 +40,6 @@ rule phasenhaplotag_bam_clair3:
 
 
 rule call_sv_severus:
-    container:
-        None
     conda:
         "../../envs/severus.yaml"
     input:

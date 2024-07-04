@@ -1,6 +1,4 @@
 rule call_sv_nanovar:
-    container:
-        None
     conda:
         "../../envs/nanovar.yaml"
     input:

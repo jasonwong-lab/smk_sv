@@ -1,6 +1,4 @@
 rule call_sv_sniffles:
-    container:
-        None
     conda:
         "../../envs/sniffles.yaml"
     input:

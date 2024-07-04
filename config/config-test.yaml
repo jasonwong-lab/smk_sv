@@ -6,7 +6,6 @@
 # * Only the first mapper will be used                                       * #
 # *--------------------------------------------------------------------------* #
 
-container: /home/user/doc/singularity/smk_sv
 dir_run: /home/user/projects/SV/analysis/wgs
 mapper:
   minimap2: !!bool true

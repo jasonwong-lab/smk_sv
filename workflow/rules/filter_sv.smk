@@ -1,4 +1,6 @@
 rule filter_sv:
+    container:
+        "docker://mhjiang97/smk_sv:latest"
     input:
         vcf="{caller}/{sample}/{caller}.vcf",
         bam="minimap2/{sample}/{sample}.sorted.bam",

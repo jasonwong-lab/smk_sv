@@ -86,35 +86,13 @@ flowchart TD
    - Check the predefined `wildcards_constraints` in the `Snakefile` and modify/delete it if necessary.
    - Using a JSON schema to validate the configuration file might prevent Snakemake from monitoring changes to the parameters. You can comment the `validate(config, "config/config.schema.json")` in the `Snakefile`.
 
-2. **Build an `apptainer` sandbox.**
-
-   ```shell
-   mkdir -p ~/doc/singularity
-   singularity pull ~/doc/singularity/smk_sv.sif docker://mhjiang97/smk_sv:latest
-   singularity build --sandbox ~/doc/singularity/smk_sv ~/doc/singularity/smk_sv.sif
-   ```
-   Or build it from the def file (You might need `--fakeroot` to build from a singularity def file):
-   ```shell
-   mkdir -p ~/doc/singularity
-   singularity build --sandbox ~/doc/singularity/smk_sv workflow/scripts/container/smk_sv.def
-   ```
-
-   - A Dockerfile is also provided under `workflow/scripts/container/`.
-
-3. **Create conda environments.**
-
-   ```shell
-   snakemake --conda-create-envs-only
-   ```
-
-4. For SV annotation, VEP and SnpEff will be install in the conda environment, but you have to **install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself** because it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
+2. For SV annotation, VEP and SnpEff will be install in the conda environment, but you have to **install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself** because it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
    - Creating a lock file for each combination of sample and type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `workflow/profile/default/config.yaml` where its default is `1`.
    - When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv_snpeffnvep`. Don't forget to make `vep` executable in your environment.
 
-5. **Create `config/config.yaml` from `config/config-test.yaml`.**
+3. **Create `config/config.yaml` from `config/config-test.yaml`.**
 
    - Specification of important elements:
-      - `container`: path to the container built in the step 2.
       - `dir_run`: working directory where all results will be stored.
       - `mapper`: dict whose keys are names of mappers and values (boolean) indicate whether perform mapping or not. Only the first mapper will be used. When a mapper is specified and its value is `false`, no mapping by this mapper will be performed, but its results will be used in the following steps.
       - `callers`: dict whose keys are names of callers and values (boolean) indicate whether perform SV calling using this caller or not. When a caller is specified and its value is `false`, no SV calling by this caller will be performed, but its results will be used in the following steps.
@@ -123,16 +101,22 @@ flowchart TD
       - ...
    - You must change the file paths specified in the config.
 
-6. **Create `config/pep/samples.csv` and `config/pep/config.yaml` from `config/pep/samples-test.csv` and `config/pep/config-test.yaml`.**
+4. **Create `config/pep/samples.csv` and `config/pep/config.yaml` from `config/pep/samples-test.csv` and `config/pep/config-test.yaml`.**
    - Only `sample_name` in the table will be used.
    - More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
 
-7. **Create `workflow/profiles/default/config.yaml` from `workflow/profiles/default/config-test.yaml`.**
+5. **Create `workflow/profiles/default/config.yaml` from `workflow/profiles/default/config-test.yaml`.**
    - Bind directories you need in the container.
    - Change the number of CPUs you prefer.
    - Modify/add/delete other parameters of this snakemake pipeline.
 
-8. **Run the whole pipeline.**
+6. **Create conda environments.**
+
+   ```shell
+   snakemake --conda-create-envs-only
+   ```
+
+7. **Run the whole pipeline.**
 
    ```shell
    snakemake

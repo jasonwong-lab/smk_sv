@@ -1,6 +1,4 @@
 rule annotate_sv_snpeffnvep:
-    container:
-        None
     conda:
         "../envs/annotators.yaml"
     input:
@@ -23,8 +21,6 @@ rule annotate_sv_snpeffnvep:
 
 
 rule annotate_sv_annotsv:
-    container:
-        None
     input:
         vcf="{caller}/{sample}/{caller}.{type_sv}.vcf",
     output:

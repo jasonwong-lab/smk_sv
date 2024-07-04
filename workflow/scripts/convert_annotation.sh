@@ -46,5 +46,6 @@ else
 fi
 
 snpsift extractFields -s "," -e "." "${vcf_extracted}" "${common_fields}" "${fmt_fields}" \
+    | grep -v 'Duplicate cpuset controllers detected' \
     | sed '1s/GEN\[\*\]\.//g ; 1s/ANN\[\*\]\.//g ; 1s/\[\*\]//g' > "${tsv}"; } \
 1> "${log}" 2>&1

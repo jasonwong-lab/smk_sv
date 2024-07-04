@@ -14,9 +14,6 @@ configfile: "config/config.yaml"
 pepfile: "config/pep/config.yaml"
 
 
-container: str(Path(config["container"]).expanduser().absolute())
-
-
 wildcard_constraints:
     sample=r"\w+",
     type_sv=r"\w+",

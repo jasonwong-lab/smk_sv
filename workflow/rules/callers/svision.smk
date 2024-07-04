@@ -1,4 +1,6 @@
 rule call_sv_svision:
+    container:
+        "docker://mhjiang97/smk_sv:latest"
     input:
         bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
         fasta=config["fasta"],

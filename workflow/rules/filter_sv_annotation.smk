@@ -1,7 +1,5 @@
 # TODO: need modification
 rule filter_sv_annotation:
-    container:
-        None
     conda:
         "../envs/r.yaml"
     input:

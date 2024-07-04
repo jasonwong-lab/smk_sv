@@ -1,6 +1,4 @@
 rule call_sv_cutesv:
-    container:
-        None
     conda:
         "../../envs/cutesv.yaml"
     input:

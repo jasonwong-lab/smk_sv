@@ -10,7 +10,7 @@ ENV BASH_ENV ~/.bashrc
 RUN rm /'=3.6' && \
     apt-get update --fix-missing && \
     yes | apt-get upgrade && \
-    apt-get install unzip wget bzip2 make g++ libboost-graph-dev libcurl4-openssl-dev curl tabix default-jdk -y && \
+    apt-get install unzip wget bzip2 make g++ libboost-graph-dev libcurl4-openssl-dev curl tabix openjdk-17-jdk -y && \
     apt install --no-install-recommends software-properties-common dirmngr -y && \
     wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc && \
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /opt/miniconda.sh && \
@@ -27,10 +27,6 @@ RUN rm /'=3.6' && \
     cd /tmp/bcftools && \
     make && \
     mv /tmp/bcftools/bcftools /bin/bcftools && \
-    git clone https://github.com/fritzsedlazeck/SURVIVOR.git /tmp/SURVIVOR && \
-    cd /tmp/SURVIVOR/Debug && \
-    make && \
-    mv /tmp/SURVIVOR/Debug/SURVIVOR /bin/SURVIVOR && \
     curl -o /opt/snpEff_latest_core.zip 'https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip' && \
     cd /opt && \
     unzip /opt/snpEff_latest_core.zip && \

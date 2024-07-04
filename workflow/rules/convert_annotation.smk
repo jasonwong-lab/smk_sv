@@ -1,4 +1,6 @@
 rule convert_annotation:
+    container:
+        "docker://mhjiang97/smk_sv:latest"
     input:
         vcf_extracted="{caller}/{sample}/merged/{caller}.{type_sv}.snpeff.vep.vcf",
         fasta=config["fasta"],
