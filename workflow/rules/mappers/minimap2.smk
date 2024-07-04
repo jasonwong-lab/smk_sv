@@ -21,7 +21,7 @@ rule map_minimap2:
     params:
         dir_data=config["dir_data"],
         suffix_fastq=config["suffix_fastq"],
-    threads: math.floor(workflow.cores / NUMBER_SAMPLES) # config["threads"]
+    threads: math.floor(workflow.cores / NUMBER_SAMPLES)  # config["threads"]
     log:
         "logs/{sample}/map_minimap2.log",
     shell:

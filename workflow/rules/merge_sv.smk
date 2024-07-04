@@ -14,11 +14,21 @@ rule merge_sv_survivor:
     params:
         min_length_sv=config["min_length_sv"],
         callers=list(config["callers"].keys()),
-        merge_distance_sv=lambda wildcards: config["merge_distance_sv"][wildcards.type_sv],
-        merge_nbr_callers=lambda wildcards: config["merge_nbr_callers"][wildcards.type_sv],
-        merge_type_sv=lambda wildcards: 1 if config["merge_type_sv"][wildcards.type_sv] else 0,
-        merge_strand=lambda wildcards: 1 if config["merge_strand"][wildcards.type_sv] else 0,
-        merge_estimate_distance=lambda wildcards: 1 if config["merge_estimate_distance"][wildcards.type_sv] else 0,
+        merge_distance_sv=lambda wildcards: config["merge_distance_sv"][
+            wildcards.type_sv
+        ],
+        merge_nbr_callers=lambda wildcards: config["merge_nbr_callers"][
+            wildcards.type_sv
+        ],
+        merge_type_sv=lambda wildcards: 1
+        if config["merge_type_sv"][wildcards.type_sv]
+        else 0,
+        merge_strand=lambda wildcards: 1
+        if config["merge_strand"][wildcards.type_sv]
+        else 0,
+        merge_estimate_distance=lambda wildcards: 1
+        if config["merge_estimate_distance"][wildcards.type_sv]
+        else 0,
     log:
         "logs/{sample}/merge_sv_survivor.{type_sv}.log",
     script:

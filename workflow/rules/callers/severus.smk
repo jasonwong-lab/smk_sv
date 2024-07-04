@@ -13,7 +13,7 @@ rule phasenhaplotag_bam_clair3:
         ),
     params:
         dir_out=directory("clair3/{sample}"),
-    threads: math.floor(workflow.cores / NUMBER_SAMPLES) # config["threads"]
+    threads: math.floor(workflow.cores / NUMBER_SAMPLES)  # config["threads"]
     log:
         "logs/{sample}/phasenhaplotag_bam_clair3.log",
     shell:

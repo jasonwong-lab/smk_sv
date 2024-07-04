@@ -1,10 +1,7 @@
 FROM jiadongxjtu/svision:latest
 
-COPY delly /bin/delly
-COPY duphold /bin/duphold
-
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
-ENV PATH /opt/miniconda3/bin:/opt/samtools/bin:${PATH}:/opt/snpEff/exec:/bin:/opt/bin:${PATH}
+ENV PATH /opt/miniconda3/bin:/opt/bin:/opt/samtools/bin:${PATH}:/opt/snpEff/exec:/bin:${PATH}
 ENV BASH_ENV ~/.bashrc
 
 RUN rm /'=3.6' && \
@@ -17,11 +14,9 @@ RUN rm /'=3.6' && \
     bash /opt/miniconda.sh -b -u -p /opt/miniconda3 && \
     rm -rf /opt/miniconda.sh && \
     /opt/miniconda3/bin/conda init bash && \
-    . /root/.bashrc && \
     conda config --add channels defaults && \
     conda config --add channels bioconda && \
     conda config --add channels conda-forge && \
-    echo "conda activate base" >> ~/.bashrc && \
     git clone --recurse-submodules https://github.com/samtools/htslib.git /tmp/htslib && \
     git clone https://github.com/samtools/bcftools.git /tmp/bcftools && \
     cd /tmp/bcftools && \
@@ -39,16 +34,19 @@ RUN rm /'=3.6' && \
     ./configure --prefix=/opt/samtools && \
     make && \
     make install && \
+    wget -O /bin/delly https://github.com/dellytools/delly/releases/download/v1.2.6/delly_v1.2.6_linux_x86_64bit && \
+    chmod +x /bin/delly && \
+    wget -O /bin/duphold https://github.com/brentp/duphold/releases/download/v0.2.3/duphold && \
+    chmod +x /bin/duphold && \
+    mkdir -p /opt/bin && \
+    cd /opt/bin && \
+    ln -s /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl ./ && \
+    ln -s /opt/miniconda3/envs/vcf2maf/bin/perl ./ && \
+    sed -i '410s/^/# /' /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl && \
+    sed -i '1s/.*/\#\!\/opt\/miniconda3\/envs\/vcf2maf\/bin\/perl/' /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl && \
     conda clean -a && \
     apt-get clean && \
     rm -rf /bar/lib/apt/lists/* && \
     rm -rf /tmp/* && \
     rm -rf /opt/miniconda3/pkgs/* && \
     rm -rf /root/.cache/pip
-
-RUN mkdir /opt/bin && \
-    cd /opt/bin && \
-    ln -s /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl /opt/bin/vcf2maf.pl && \
-    ln -s /opt/miniconda3/envs/vcf2maf/bin/perl /opt/bin/perl && \
-    sed -i '410s/^/# /' /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl && \
-    sed -i '1s/.*/\#\!\/opt\/miniconda3\/envs\/vcf2maf\/bin\/perl/' /opt/miniconda3/envs/vcf2maf/bin/vcf2maf.pl

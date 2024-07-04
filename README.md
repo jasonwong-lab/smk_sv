@@ -86,9 +86,9 @@ flowchart TD
    - Check the predefined `wildcards_constraints` in the `Snakefile` and modify/delete it if necessary.
    - Using a JSON schema to validate the configuration file might prevent Snakemake from monitoring changes to the parameters. You can comment the `validate(config, "config/config.schema.json")` in the `Snakefile`.
 
-2. For SV annotation, VEP and SnpEff will be install in the conda environment, but you have to **install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself** because it's not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
+2. **Install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself.**
+   - AnnotSV is not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
    - Creating a lock file for each combination of sample and type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `workflow/profile/default/config.yaml` where its default is `1`.
-   - When you prefer using a different version of VEP, please add `container: None` into the rule `annotate_sv_snpeffnvep`. Don't forget to make `vep` executable in your environment.
 
 3. **Create `config/config.yaml` from `config/config-test.yaml`.**
 

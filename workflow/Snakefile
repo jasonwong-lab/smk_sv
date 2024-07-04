@@ -1,6 +1,7 @@
-from pathlib import Path
 import math
+from pathlib import Path
 from snakemake.utils import validate
+
 
 # *--------------------------------------------------------------------------* #
 # * Configuration                                                            * #
@@ -25,6 +26,9 @@ if config["dir_run"]:
     workdir: config["dir_run"]
 
 
+MAPPERS = ["minimap2"]
+
+
 CALLERS = [
     "cutesv",
     "sniffles",
@@ -36,9 +40,6 @@ CALLERS = [
     "nanosv",
     "nanovar",
 ]
-
-
-MAPPERS = ["minimap2"]
 
 
 SAMPLES = pep.sample_table["sample_name"]
