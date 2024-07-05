@@ -7,3 +7,38 @@ cores: all
 resources:
   constraint_annotsv: 1
 apptainer-args: "--bind /storage,/home/user"
+set-resources:
+  make_index_minimap2:
+    mem_mb: 50000
+  map_minimap2:
+    mem_mb: 200000
+  phasenhaplotag_bam_clair3:
+    mem_mb: 200000
+  call_sv_cutesv:
+    mem_mb: 100000
+  call_sv_sniffles:
+    mem_mb: 100000
+  call_sv_svim:
+    mem_mb: 100000
+  call_sv_severus:
+    mem_mb: 100000
+  call_sv_svision:
+    mem_mb: 100000
+  filter_sv:
+    mem_mb: 10000
+  split_vcf:
+    mem_mb: 10000
+  annotate_sv_snpeffnvep:
+    mem_mb: 50000
+  annotate_sv_annotsv:
+    mem_mb: 50000
+  merge_sv_survivor:
+    mem_mb: 10000
+  extract_annotation:
+    mem_mb: 10000
+  convert_annotation:
+    mem_mb: 10000
+  filter_sv_annotation:
+    mem_mb: 50000
+  merge_sv_filtered_annotation_survivor:
+    mem_mb: 10000

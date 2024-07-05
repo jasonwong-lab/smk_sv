@@ -1,6 +1,6 @@
 latency-wait: !!int 60
 executor: cluster-generic
-cluster-generic-submit-cmd: "qsub -N smk-{rule}-{wildcards}-{jobid} -l nodes=1:ppn=12,mem=200gb,walltime=72:00:00 -q cgs_queue -o logs/pbs/smk-{rule}-{wildcards}-{jobid}.out -e logs/pbs/smk-{rule}-{wildcards}-{jobid}.err -j oe -V -M mjhk@connect.hku.hk -m ae"
+cluster-generic-submit-cmd: "qsub -N smk-{rule}-{wildcards}-{jobid} -l nodes=1:ppn={threads},mem={resources.mem_mb}mb,walltime=72:00:00 -q cgs_queue -o logs/pbs/smk-{rule}-{wildcards}-{jobid}.out -e logs/pbs/smk-{rule}-{wildcards}-{jobid}.err -j oe -V -M mjhk@connect.hku.hk -m ae"
 cluster-generic-status-cmd: status.py
 jobs: 12
 # cluster-generic-cancel-cmd: cancel.py # "qdel {cluster.job-id}"
