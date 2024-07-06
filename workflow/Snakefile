@@ -48,7 +48,7 @@ SAMPLES = pep.sample_table["sample_name"]
 NUMBER_SAMPLES = len(SAMPLES)
 
 
-NUMBER_CALLERS = len(list(config["callers"].keys()))
+NUMBER_CALLERS = len([caller for caller, enabled in config["callers"].items() if enabled])
 
 
 # *--------------------------------------------------------------------------* #
