@@ -15,13 +15,13 @@ type_sv="${snakemake_wildcards[type_sv]}"
 caller="${snakemake_wildcards[caller]}"
 
 
-sleep $((RANDOM % 10 + 1))
+# sleep $((RANDOM % 10 + 1))
 
-lockfile=annotsv.${sample}.${caller}.lock
-while [ -f "${lockfile}" ]; do
-    sleep 10
-done
-touch "${lockfile}"
+# lockfile=annotsv.${sample}.${caller}.lock
+# while [ -f "${lockfile}" ]; do
+#     sleep 10
+# done
+# touch "${lockfile}"
 
 input_annotsv=${vcf}
 size_max=300
@@ -34,5 +34,5 @@ if { [ "${caller}" == "cutesv" ] && [ "${type_sv}" == "DEL" ]; } \
 fi
 AnnotSV -genomeBuild "${genome}" -SVinputFile "${input_annotsv}" -outputFile "${tsv}" -SVminSize 1 -overwrite 1 1> "${log}" 2>&1
 
-sleep 5
-rm "${lockfile}"
+# sleep 5
+# rm "${lockfile}"
