@@ -39,8 +39,6 @@ RUN rm /'=3.6' && \
     ./configure --prefix=/opt/samtools && \
     make && \
     make install && \
-    wget -O /bin/delly https://github.com/dellytools/delly/releases/download/v1.2.6/delly_v1.2.6_linux_x86_64bit && \
-    chmod +x /bin/delly && \
     wget -O /bin/duphold https://github.com/brentp/duphold/releases/download/v0.2.3/duphold && \
     chmod +x /bin/duphold && \
     mkdir -p /opt/bin && \
