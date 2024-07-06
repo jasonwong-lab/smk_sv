@@ -1,13 +1,18 @@
 FROM jiadongxjtu/svision:latest
 
-ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 ENV PATH /opt/miniconda3/bin:/opt/bin:/opt/samtools/bin:${PATH}:/opt/snpEff/exec:/bin:${PATH}
 ENV BASH_ENV ~/.bashrc
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/lib
 
 RUN rm /'=3.6' && \
     apt-get update --fix-missing && \
     yes | apt-get upgrade && \
-    apt-get install unzip wget bzip2 make g++ libboost-graph-dev libcurl4-openssl-dev curl tabix openjdk-17-jdk -y && \
+    apt-get install libcurl4 openssl libssl-dev locales unzip wget bzip2 make g++ libboost-graph-dev libcurl4-openssl-dev curl tabix openjdk-17-jdk -y && \
+    locale-gen en_US.UTF-8 && \
+    ln -s /usr/lib/x86_64-linux-gnu/libcrypto.so /usr/lib/libcrypto.so.10 && \
+    ln -s /usr/lib/x86_64-linux-gnu/libcurl.so.4 /usr/lib/libcurl.so.4 && \
+    ldconfig && \
     apt install --no-install-recommends software-properties-common dirmngr -y && \
     wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc && \
     wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /opt/miniconda.sh && \
