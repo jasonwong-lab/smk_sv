@@ -70,5 +70,52 @@ function filter_sv() {
     bcftools view -e "(SVTYPE = \"DEL\" & FMT/DHFFC[0] > ${min_dhffc}) | (SVTYPE = \"DUP\" & FMT/DHBFC[0] < ${max_dhbfc})" "${vcf_duphold}" > "${vcf_duphold_filtered}"
 }
 
+function download_duphold() {
+    if command -v duphold &> /dev/null && [ -x "$(command -v duphold)" ]; then
+        echo "[INFO] duphold is already installed."
+    else
+        if [ ! -f duphold ]; then
+            lock_file="duphold_download.lock"
+            lock_timeout=600 # 10 minutes timeout for lock
+            start_time=$(date +%s)
+            while ! mkdir "${lock_file}" 2>/dev/null; do
+                echo "[INFO] Another instance is downloading duphold. Waiting..."
+                current_time=$(date +%s)
+                if [ $((current_time - start_time)) -gt $lock_timeout ]; then
+                    echo "[ERROR] Timeout waiting for lock to release."
+                    exit 1
+                fi
+                sleep 5
+            done
+            echo "[INFO] Downloading duphold..."
+            max_attempts=3
+            attempt=0
+            success=0
+            while [ $attempt -lt $max_attempts ] && [ $success -eq 0 ]; do
+                if curl -o duphold 'https://github.com/brentp/duphold/releases/download/v0.2.3/duphold'; then
+                    chmod +x duphold
+                    success=1
+                else
+                    echo "[WARNING] Failed to download duphold, attempt $((attempt + 1)) of $max_attempts."
+                    attempt=$((attempt + 1))
+                    sleep 10 # wait before retrying
+                fi
+            done
+            if [ $success -eq 0 ]; then
+                echo "[ERROR] Failed to download duphold after $max_attempts attempts. Cleaning up."
+                [ -f duphold ] && rm -f duphold
+                rmdir "${lock_file}"
+                exit 1
+            fi
+            rmdir "${lock_file}"
+        else
+            echo "[INFO] duphold is already downloaded."
+        fi
+        export PATH="$(pwd):${PATH}"
+    fi
+}
 
-filter_sv "${vcf}" "${bam}" "${sample}" "${caller}" 1> "${log}" 2>&1
+
+{ download_duphold
+filter_sv "${vcf}" "${bam}" "${sample}" "${caller}"; } \ 
+1> "${log}" 2>&1

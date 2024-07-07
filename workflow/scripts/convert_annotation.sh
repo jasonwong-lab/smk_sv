@@ -19,7 +19,63 @@ caller="${snakemake_wildcards[caller]}"
 type_sv="${snakemake_wildcards[type_sv]}"
 
 
-{ input_vcf2maf=${vcf_extracted}
+function modify_vcf2maf() {
+    file_vcf2maf=$(which vcf2maf.pl)
+    line_410=$(sed -n '410p' "${file_vcf2maf}")
+    if [[ ! $line_410 =~ ^# ]]; then
+        sed -i '410s/^/# /' "${file_vcf2maf}"
+    fi
+}
+
+function download_snpeff() {
+    if command -v snpsift &> /dev/null && [ -x "$(command -v snpsift)" ]; then
+        echo "[INFO] SnpEff is already installed."
+    else
+        if [ ! -d snpEff ]; then
+            lock_file="snpeff_download.lock"
+            lock_timeout=600 # 10 minutes timeout for lock
+            start_time=$(date +%s)
+            while ! mkdir "${lock_file}" 2>/dev/null; do
+                echo "[INFO] Another instance is downloading SnpEff. Waiting..."
+                current_time=$(date +%s)
+                if [ $((current_time - start_time)) -gt $lock_timeout ]; then
+                    echo "[ERROR] Timeout waiting for lock to release."
+                    exit 1
+                fi
+                sleep 5
+            done
+            echo "[INFO] Downloading SnpEff..."
+            max_attempts=3
+            attempt=0
+            success=0
+            while [ $attempt -lt $max_attempts ] && [ $success -eq 0 ]; do
+                if curl -o snpEff_latest_core.zip 'https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip'; then
+                    success=1
+                    unzip snpEff_latest_core.zip && rm -f snpEff_latest_core.zip
+                else
+                    echo "[WARNING] Failed to download SnpEff, attempt $((attempt + 1)) of $max_attempts."
+                    attempt=$((attempt + 1))
+                    sleep 10 # wait before retrying
+                fi
+            done
+            if [ $success -eq 0 ]; then
+                echo "[ERROR] Failed to download SnpEff after $max_attempts attempts. Cleaning up."
+                [ -f snpEff_latest_core.zip ] && rm -f snpEff_latest_core.zip
+                rmdir "${lock_file}"
+                exit 1
+            fi
+            rmdir "${lock_file}"
+        else
+            echo "[INFO] SnpEff is already downloaded."
+        fi
+        export PATH="$(pwd)/snpEff/exec:${PATH}"
+    fi
+}
+
+
+{  modify_vcf2maf
+download_snpeff
+input_vcf2maf=${vcf_extracted}
 
 if [ "${caller}" == "svim" ] && [ "${type_sv}" == "DUP" ]; then
     sed -e 's/DUP:TANDEM/DUP/g' -e 's/DUP:INT/DUP/g' "${input_vcf2maf}" > "${input_vcf2maf%.*}".DUP.vcf
