@@ -22,9 +22,7 @@ type_sv="${snakemake_wildcards[type_sv]}"
 function modify_vcf2maf() {
     file_vcf2maf=$(which vcf2maf.pl)
     line_410=$(sed -n '410p' "${file_vcf2maf}")
-    if [[ ! $line_410 =~ ^# ]]; then
-        sed -i '410s/^/# /' "${file_vcf2maf}"
-    fi
+    [[ ! ${line_410} =~ ^# ]] && sed -i '410s/^/# /' "${file_vcf2maf}"
 }
 
 function download_snpeff() {
@@ -33,17 +31,15 @@ function download_snpeff() {
     else
         if [ ! -d snpEff ]; then
             lock_file="snpeff_download.lock"
-            lock_timeout=600 # 10 minutes timeout for lock
-            start_time=$(date +%s)
             while ! mkdir "${lock_file}" 2>/dev/null; do
                 echo "[INFO] Another instance is downloading SnpEff. Waiting..."
-                current_time=$(date +%s)
-                if [ $((current_time - start_time)) -gt $lock_timeout ]; then
-                    echo "[ERROR] Timeout waiting for lock to release."
-                    exit 1
-                fi
                 sleep 5
             done
+            if [ -d snpEff ]; then
+                rmdir "${lock_file}"
+                echo "[INFO] SnpEff is already downloaded."
+                return
+            fi
             echo "[INFO] Downloading SnpEff..."
             max_attempts=3
             attempt=0
@@ -59,8 +55,9 @@ function download_snpeff() {
                 fi
             done
             if [ $success -eq 0 ]; then
-                echo "[ERROR] Failed to download SnpEff after $max_attempts attempts. Cleaning up."
-                [ -f snpEff_latest_core.zip ] && rm -f snpEff_latest_core.zip
+                echo "[ERROR] Failed to download SnpEff after $max_attempts attempts. Cleaning up..."
+                [[ -f snpEff_latest_core.zip ]] && rm -f snpEff_latest_core.zip
+                [[ -d snpEff ]] && rm -rf snpEff
                 rmdir "${lock_file}"
                 exit 1
             fi
@@ -68,13 +65,14 @@ function download_snpeff() {
         else
             echo "[INFO] SnpEff is already downloaded."
         fi
-        export PATH="$(pwd)/snpEff/exec:${PATH}"
     fi
 }
 
 
-{  modify_vcf2maf
+{ modify_vcf2maf
 download_snpeff
+export PATH="$(pwd)/snpEff/exec:${PATH}"
+
 input_vcf2maf=${vcf_extracted}
 
 if [ "${caller}" == "svim" ] && [ "${type_sv}" == "DUP" ]; then
