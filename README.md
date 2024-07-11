@@ -132,6 +132,14 @@ flowchart TD
    ```
    You can refer to the profile I have been using at `workflow/profiles/mycluster`, or turn to snakemake websites.
 
+## Note for Cluster Users
+
+If you are using a cluster that does not support Singularity well, please switch to the `without_docker` branch of this repository. This branch is tailored for environments where containers might not be the best option.
+
+```shell
+git checkout without_docker
+```
+
 ## License
 
 Codes here are licensed under the [GNU General Public License v3](http://www.gnu.org/licenses/gpl-3.0.html).
