@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2154
 
+set -x
+
 vcf="${snakemake_input[vcf]}"
 bam="${snakemake_input[bam]}"
 fasta="${snakemake_input[fasta]}"
@@ -114,6 +116,6 @@ function download_duphold() {
 
 
 { download_duphold
-export PATH="$(pwd):${PATH}"
-filter_sv "${vcf}" "${bam}" "${sample}" "${caller}"; } \ 
+export PATH="${PATH}:$(pwd)"
+filter_sv "${vcf}" "${bam}" "${sample}" "${caller}"; } \
 1> "${log}" 2>&1

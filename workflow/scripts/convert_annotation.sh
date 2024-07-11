@@ -71,7 +71,7 @@ function download_snpeff() {
 
 { modify_vcf2maf
 download_snpeff
-export PATH="$(pwd)/snpEff/exec:${PATH}"
+export PATH="${PATH}:$(pwd)/snpEff/exec"
 
 input_vcf2maf=${vcf_extracted}
 
