@@ -4,4 +4,4 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - cutesv=2.1.1 
+  - cutesv=2.1.1
