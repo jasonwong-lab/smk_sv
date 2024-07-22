@@ -19,23 +19,16 @@ rule call_sv_svision:
     shell:
         """
         {{ for chr in chr{{1..22}} chrX chrY; do
-            echo -e "[INFO] Running SVision on chromosome ${{chr}}..."
-            SVision \\
-            -t {threads} \\
-            -s {params.min_num_reads} \\
-            --min_mapq {params.min_quality_mapping} \\
-            --min_sv_size {params.min_length_sv} \\
-            --max_sv_size 999999999999 \\
-            --qname \\
-            --graph \\
-            --min_gt_depth {params.min_num_reads} \\
-            -o {params.dir_out} \\
-            -b {input.bam} \\
-            -m {params.model_svision} \\
-            -g {input.fasta} \\
-            -n {wildcards.sample}.${{chr}} \\
-            -c ${{chr}}
-            sleep 10
+            lock_file="{params.dir_out}/${{chr}}.lock"
+            if [ ! -f ${{lock_file}} ]; then
+                echo -e "[INFO] Running SVision on chromosome ${{chr}}..."
+                SVision -t {threads} -s {params.min_num_reads} --min_mapq {params.min_quality_mapping} --min_sv_size {params.min_length_sv} --max_sv_size 999999999999 --qname --graph --min_gt_depth {params.min_num_reads} -o {params.dir_out} -b {input.bam} -m {params.model_svision} -g {input.fasta} -n {wildcards.sample}.${{chr}} -c ${{chr}}
+                sleep 10
+                touch ${{lock_file}}
+                sleep 10
+            else
+                echo -e "[INFO] SVision already run for chromosome ${{chr}}, skipping..."
+            fi
         done
 
         vcf_svision_lead=$(find {params.dir_out}/{wildcards.sample}.chr*.svision.s{params.min_num_reads}.graph.vcf | head -1)
