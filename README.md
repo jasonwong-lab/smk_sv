@@ -1,6 +1,6 @@
-# A snakemake pipeline to call structural variants from ONT data
+# A snakemake pipeline to call structural variants from tumor-only ONT data
 
-***Note: This pipeline is in its early stages. Please use with caution.***
+> :warning: This pipeline is in its early stages. Please use with caution.
 
 ## Author
 
@@ -72,9 +72,11 @@ flowchart TD
   other_filtered_vcf:::myclass2
 ```
 
-## Usage
+## Getting started
 
-1. **Ensure you have clonned this repo and navigated into it.**
+### Prerequisites
+
+1. Clone this repo and navigate into it:
 
    ```shell
    git clone https://github.com/jasonwong-lab/smk_sv.git
@@ -86,55 +88,65 @@ flowchart TD
    - Check the predefined `wildcards_constraints` in the `Snakefile` and modify/delete it if necessary.
    - Using a JSON schema to validate the configuration file might prevent Snakemake from monitoring changes to the parameters. You can comment the `validate(config, "config/config.schema.json")` in the `Snakefile`.
 
-2. **Install [AnnotSV](https://github.com/lgmgeo/AnnotSV) by yourself.**
+2. Install [AnnotSV](https://github.com/lgmgeo/AnnotSV) manually.
    - AnnotSV is not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
    - Creating a lock file for each combination of sample and type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `workflow/profile/default/config.yaml` where its default is `1`.
 
-3. **Create `config/config.yaml` from `config/config-test.yaml`.**
+### Configuration
 
-   - Specification of important elements:
-      - `dir_run`: working directory where all results will be stored.
-      - `mapper`: dict whose keys are names of mappers and values (boolean) indicate whether perform mapping or not. Only the first mapper will be used. When a mapper is specified and its value is `false`, no mapping by this mapper will be performed, but its results will be used in the following steps.
-      - `callers`: dict whose keys are names of callers and values (boolean) indicate whether perform SV calling using this caller or not. When a caller is specified and its value is `false`, no SV calling by this caller will be performed, but its results will be used in the following steps.
-      - `types_sv`: SV types to be called. BND indicates translocations.
-      - `threads`: number of CPUs of each rule to be used.
-      - ...
-   - You must change the file paths specified in the config.
+1. Prepare config files:
+   1. Copy `config/config-test.yaml` to `config/config.yaml`.
+      - Adjust the configuration settings according to your project's needs.
+      - Specification of important elements:
+         - `dir_run`: working directory where all results will be stored.
+         - `mapper`: dict whose keys are names of mappers and values (boolean) indicate whether perform mapping or not. Only the first mapper will be used. When a mapper is specified and its value is `false`, no mapping by this mapper will be performed, but its results will be used in the following steps.
+         - `callers`: dict whose keys are names of callers and values (boolean) indicate whether perform SV calling using this caller or not. When a caller is specified and its value is `false`, no SV calling by this caller will be performed, but its results will be used in the following steps.
+         - `types_sv`: SV types to be called. BND indicates translocations.
+         - `threads`: number of CPUs of each rule to be used.
+         - ...
+   2. Copy `workflow/profiles/default/config-test.yaml` to `workflow/profiles/default/config.yaml`.
+      - Bind directories you need in the container.
+      - Change the number of CPUs you prefer.
+      - Modify/add/delete other parameters of this snakemake pipeline.
 
-4. **Create `config/pep/samples.csv` and `config/pep/config.yaml` from `config/pep/samples-test.csv` and `config/pep/config-test.yaml`.**
-   - Only `sample_name` in the table will be used.
-   - More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
+2. Prepare sample data:
+   1. Copy `config/pep/samples-test.csv` to `config/pep/samples.csv`, and update `sample_name` in the csv.
+   2. Copy `config/pep/config-test.yaml` and `config/pep/config.yaml`.
+   More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
 
-5. **Create `workflow/profiles/default/config.yaml` from `workflow/profiles/default/config-test.yaml`.**
-   - Bind directories you need in the container.
-   - Change the number of CPUs you prefer.
-   - Modify/add/delete other parameters of this snakemake pipeline.
-
-6. **Create conda environments.**
+3. Set up Conda environments:
 
    ```shell
    snakemake --conda-create-envs-only
    ```
 
-7. **Run the whole pipeline.**
+### Execution
+
+- Run the pipeline locally:
 
    ```shell
    snakemake
    ```
+
+- Run the pipeline on a cluster:
    If you want to run this pipeline on a cluster (e.g., SLURM, or PBS), you should customise your own profile and place it into `~/.config/snakemake/`, and then run the pipeline with the profile you have set as a parameter:
+
    ```shell
    snakemake --profile <your_profile_name>
    ```
+
    Or run the pipeline with the profile you have set as an environment variable:
+
    ```shell
    export SNAKEMAKE_PROFILE=<your_profile_name>
    snakemake
    ```
+
    You can refer to the profile I have been using at `workflow/profiles/mycluster`, or turn to snakemake websites.
 
 ## Note for Cluster Users
 
-If you are using a cluster that does not support Singularity well, please switch to the `without_docker` branch of this repository. This branch is tailored for environments where containers might not be the best option.
+If you are using a cluster that does not support Singularity well, please switch to the `without_docker` branch. This branch is tailored for environments where containers might not be the best option.
 
 ```shell
 git checkout without_docker
