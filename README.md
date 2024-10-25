@@ -41,10 +41,6 @@ Minghao Jiang, <jiang01@icloud.com>
   }
 }%%
 
----
-title: SV calling workflow
----
-
 flowchart TD
 
   classDef myclass fill:#00B8A9, stroke-width:0px, padding:0px, margin:0px;
