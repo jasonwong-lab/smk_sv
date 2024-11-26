@@ -71,6 +71,7 @@ function download_snpeff() {
 
 { modify_vcf2maf
 download_snpeff
+# shellcheck disable=SC2155
 export PATH="${PATH}:$(pwd)/snpEff/exec"
 
 input_vcf2maf=${vcf_extracted}
