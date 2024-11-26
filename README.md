@@ -32,40 +32,74 @@ Minghao Jiang, <jiang01@icloud.com>
     'theme': 'base',
     'themeVariables': {
       'fontFamily': 'Comic Sans MS',
-      'primaryColor': '#F4CE14',
-      'primaryTextColor': '#FFFFFF',
-      'lineColor': '#EE6983',
-      'secondaryColor': '#00B8A9',
-      'tertiaryColor': '#FFFFFF'
+      'primaryColor': '#ACD98DFF',
+      'primaryTextColor': 'black',
+      'lineColor': 'black',
+      'secondaryColor': 'grey',
+      'tertiaryColor': '#EEEEEE'
     }
   }
 }%%
 
 flowchart TD
 
-  classDef myclass fill:#00B8A9, stroke-width:0px, padding:0px, margin:0px;
-  classDef myclass2 fill:#A5DD9B, stroke-dasharray:5 5;
+  classDef norm stroke-width: 1px, stroke: black;
+  classDef tool fill: #FFB977FF, padding: 0px, margin: 0px, stroke-width: 1px, stroke: black;
+  classDef other_file stroke-dasharray: 5 5, stroke-width: 1px, stroke: black;
+  classDef other_tool fill: #FFB977FF, padding: 0px, margin: 0px, stroke-dasharray: 5 5, stroke-width: 1px, stroke: black;
+  classDef output fill: #98D9E4FF, stroke-width: 1px, stroke: black;
 
-  fastq([FASTQ]) -- Minimap2 --> bam([BAM])
-  bam([BAM]) -- cuteSV --> cutesv_vcf([VCF])
-  bam([BAM]) -- Sniffles2 --> sniffles2_vcf([VCF])
-  cutesv_vcf([VCF]) -- BCFtools --> cutesv_filtered_vcf([filtered VCF])
-  sniffles2_vcf([VCF]) -- BCFtools --> sniffles2_filtered_vcf([filtered VCF])
-  cutesv_filtered_vcf([filtered VCF]) --- survivor["SURVIVOR"]
-  sniffles2_filtered_vcf([filtered VCF]) --- survivor["SURVIVOR"]
-  survivor["SURVIVOR"] --> merged_vcf([merged VCF])
-  merged_vcf([merged VCF]) -- VEP, AnnotSV, and SnpEff --> annotated_vcf([annotated VCF/TSV])
-  annotated_vcf([annotated VCF/TSV]) --> somatic_vcf([somatic SVs])
-  annotated_vcf([annotated VCF/TSV]) --> germline_vcf([germline SVs])
+  fastq@{ shape: lean-r, label: "FASTQ" }
+  bam([BAM])
+  cutesv_vcf([VCF])
+  sniffles2_vcf([VCF])
+  cutesv_filtered_vcf([filtered
+  VCF])
+  sniffles2_filtered_vcf([filtered
+  VCF])
+  merged_vcf([merged VCF])
+  annotated_vcf([annotated VCF/TSV])
+  somatic_vcf@{ shape: lean-l, label: "somatic SVs" }
+  germline_vcf@{ shape: lean-l, label: "germline SVs" }
+  other_vcfs([VCFs])
+  other_filtered_vcf([filtered
+  VCFs])
+  minimap2@{ shape: tag-rect, label: "Minimap2" }
+  cutesv@{ shape: tag-rect, label: "cuteSV"  }
+  sniffles2@{ shape: tag-rect, label: " Sniffles2 " }
+  other_callers@{ shape: tag-rect, label: "other\ncallers" }
+  bcftools@{ shape: tag-rect, label: "BCFtools" }
+  survivor@{ shape: tag-rect, label: "SURVIVOR" }
+  anno_tools@{ shape: tag-rect, label: "VEP, AnnotSV, SnpEff" }
 
-  bam([BAM]) -. "other callers (e.g. SVIM)" .-> other_vcfs([VCFs])
-  other_vcfs([VCFs]) -. BCFtools .-> other_filtered_vcf([filtered VCFs])
+  fastq:::norm
+  bam:::norm
+  cutesv_vcf:::norm
+  sniffles2_vcf:::norm
+  other_vcfs:::other_file
+  cutesv_filtered_vcf:::norm
+  sniffles2_filtered_vcf:::norm
+  other_filtered_vcf:::other_file
+  merged_vcf:::norm
+  annotated_vcf:::norm
+  somatic_vcf:::output
+  germline_vcf:::output
 
-  other_filtered_vcf([filtered VCFs]) -.- survivor["SURVIVOR"]
+  minimap2:::tool
+  cutesv:::tool
+  sniffles2:::tool
+  other_callers:::other_tool
+  bcftools:::tool
+  survivor:::tool
+  anno_tools:::tool
 
-  survivor:::myclass
-  other_vcfs:::myclass2
-  other_filtered_vcf:::myclass2
+  fastq --> minimap2 --> bam
+  bam --> cutesv --> cutesv_vcf --> bcftools --> cutesv_filtered_vcf --> survivor
+  bam --> sniffles2 --> sniffles2_vcf --> bcftools --> sniffles2_filtered_vcf --> survivor
+  bam -.-> other_callers -.-> other_vcfs -.-> bcftools -.-> other_filtered_vcf -.-> survivor
+  survivor --> merged_vcf --> anno_tools --> annotated_vcf
+  annotated_vcf --> somatic_vcf
+  annotated_vcf --> germline_vcf
 ```
 
 ## Getting started
