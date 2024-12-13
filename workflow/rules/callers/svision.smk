@@ -23,9 +23,9 @@ rule call_sv_svision:
             if [ ! -f ${{lock_file}} ]; then
                 echo -e "[INFO] Running SVision on chromosome ${{chr}}..."
 
-                n_graphs=$(find {params.dir_out}/{wildcards.sample}/graphs/${{chr}}-* | wc -l)
+                n_graphs=$(find {params.dir_out}/{wildcards.sample}/graphs/${{chr}}-* -type d | wc -l)
                 if [ ${{n_graphs}} -gt 0]; then
-                    rm -rf {params.dir_out}/{wildcards.sample}/graphs/${{chr}}-*
+                    rm -rf {params.dir_out}/{wildcards.sample}/graphs/${{chr}}-*/
                 fi
                 n_segments=$(find {params.dir_out}/{wildcards.sample}/segments/${{chr}}.*.bed | wc -l)
                 if [ ${{n_segments}} -gt 0]; then
