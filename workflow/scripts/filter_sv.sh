@@ -116,6 +116,7 @@ function download_duphold() {
 
 
 { download_duphold
-export PATH="${PATH}:$(pwd)"
-filter_sv "${vcf}" "${bam}" "${sample}" "${caller}"; } \
+path="${PATH}:$(pwd)"
+export PATH="${path}"
+filter_sv "${vcf}" "${bam}" "${sample}" "${caller}" ; } \
 1> "${log}" 2>&1
