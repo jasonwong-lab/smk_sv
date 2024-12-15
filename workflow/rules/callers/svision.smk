@@ -20,30 +20,36 @@ rule call_sv_svision:
         """
         {{ for chr in chr{{1..22}} chrX chrY; do
             lock_file="{params.dir_out}/${{chr}}.lock"
-            if [ ! -f ${{lock_file}} ]; then
-                echo -e "[INFO] Running SVision on chromosome ${{chr}}..."
+            if [ -f ${{lock_file}} ]; then
+                echo -e "[INFO] SVision already run for chromosome ${{chr}}, skipping..."
+                continue
+            fi
 
-                n_graphs=$(find {params.dir_out}/{wildcards.sample}/graphs/${{chr}}-* -type d 2> /dev/null | wc -l)
-                if [ ${{n_graphs}} -gt 0]; then
+            echo -e "[INFO] Running SVision on chromosome ${{chr}}..."
+
+            if n_graphs=$(find {params.dir_out}/{wildcards.sample}/graphs/${{chr}}-*/ -type d 2> /dev/null | wc -l); then
+                if [ ${{n_graphs}} -gt 0 ]; then
                     rm -rf {params.dir_out}/{wildcards.sample}/graphs/${{chr}}-*/
                 fi
-                n_segments=$(find {params.dir_out}/{wildcards.sample}/segments/${{chr}}.*.bed 2> /dev/null | wc -l)
-                if [ ${{n_segments}} -gt 0]; then
+            fi
+
+            if n_segments=$(find {params.dir_out}/{wildcards.sample}/segments/${{chr}}.*.bed 2> /dev/null | wc -l); then
+                if [ ${{n_segments}} -gt 0 ]; then
                     rm -rf {params.dir_out}/{wildcards.sample}/segments/${{chr}}.*.bed
                 fi
-                n_predict_results=$(find {params.dir_out}/{wildcards.sample}/predict_results/${{chr}}.predict.* 2> /dev/null | wc -l)
-                if [ ${{n_predict_results}} -gt 0]; then
+            fi
+
+            if n_predict_results=$(find {params.dir_out}/{wildcards.sample}/predict_results/${{chr}}.predict.* 2> /dev/null | wc -l); then
+                if [ ${{n_predict_results}} -gt 0 ]; then
                     rm -rf {params.dir_out}/{wildcards.sample}/predict_results/${{chr}}.predict.*
                 fi
-
-                SVision -t {threads} -s {params.min_num_reads} --min_mapq {params.min_quality_mapping} --min_sv_size {params.min_length_sv} --max_sv_size 999999999999 --qname --graph --min_gt_depth {params.min_num_reads} -o {params.dir_out} -b {input.bam} -m {params.model_svision} -g {input.fasta} -n {wildcards.sample}.${{chr}} -c ${{chr}}
-
-                sleep 10
-                touch ${{lock_file}}
-                sleep 10
-            else
-                echo -e "[INFO] SVision already run for chromosome ${{chr}}, skipping..."
             fi
+
+            SVision -t {threads} -s {params.min_num_reads} --min_mapq {params.min_quality_mapping} --min_sv_size {params.min_length_sv} --max_sv_size 999999999999 --qname --graph --min_gt_depth {params.min_num_reads} -o {params.dir_out} -b {input.bam} -m {params.model_svision} -g {input.fasta} -n {wildcards.sample}.${{chr}} -c ${{chr}}
+
+            sleep 10
+            touch ${{lock_file}}
+            sleep 10
         done
 
         vcf_svision_lead=$(find {params.dir_out}/{wildcards.sample}.chr*.svision.s{params.min_num_reads}.graph.vcf | head -1)
