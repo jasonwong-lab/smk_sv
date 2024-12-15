@@ -23,15 +23,15 @@ rule call_sv_svision:
             if [ ! -f ${{lock_file}} ]; then
                 echo -e "[INFO] Running SVision on chromosome ${{chr}}..."
 
-                n_graphs=$(find {params.dir_out}/{wildcards.sample}/graphs/${{chr}}-* -type d | wc -l)
+                n_graphs=$(find {params.dir_out}/{wildcards.sample}/graphs/${{chr}}-* -type d 2> /dev/null | wc -l)
                 if [ ${{n_graphs}} -gt 0]; then
                     rm -rf {params.dir_out}/{wildcards.sample}/graphs/${{chr}}-*/
                 fi
-                n_segments=$(find {params.dir_out}/{wildcards.sample}/segments/${{chr}}.*.bed | wc -l)
+                n_segments=$(find {params.dir_out}/{wildcards.sample}/segments/${{chr}}.*.bed 2> /dev/null | wc -l)
                 if [ ${{n_segments}} -gt 0]; then
                     rm -rf {params.dir_out}/{wildcards.sample}/segments/${{chr}}.*.bed
                 fi
-                n_predict_results=$(find {params.dir_out}/{wildcards.sample}/predict_results/${{chr}}.predict.* | wc -l)
+                n_predict_results=$(find {params.dir_out}/{wildcards.sample}/predict_results/${{chr}}.predict.* 2> /dev/null | wc -l)
                 if [ ${{n_predict_results}} -gt 0]; then
                     rm -rf {params.dir_out}/{wildcards.sample}/predict_results/${{chr}}.predict.*
                 fi
