@@ -60,7 +60,7 @@ calculate_overlap_flag <- function(coord, sv) {
   any(pcts_gr >= 0.9 & pcts_sv >= 0.8)
 }
 
-add_overlap_flag_annotsv <- function(tsv, workers = detectCores()) {
+add_overlap_flag_annotsv <- function(tsv, sv_type, workers = detectCores()) {
   columns <- c("B_gain_coord", "B_loss_coord", "po_B_loss_allG_coord", "B_ins_coord", "po_B_gain_allG_coord", "B_inv_coord")
   # pct_columns <- c("pct_gain", "pct_loss", "pct_po_loss", "pct_ins", "pct_po_gain", "pct_inv")
   flag_columns <- c("flag_gain", "flag_loss", "flag_po_loss", "flag_ins", "flag_po_gain", "flag_inv")
@@ -72,7 +72,20 @@ add_overlap_flag_annotsv <- function(tsv, workers = detectCores()) {
     tsv[[flag_columns[i]]] <- rep(FALSE, nrow(tsv))
   }
 
-  gr_sv <- GRanges(seqnames = as.character(tsv$SV_chrom), ranges = IRanges(as.numeric(tsv$SV_start), as.numeric(tsv$SV_end)))
+  if (sv_type == "INS") {
+    gr_sv <- GRanges(
+      seqnames = as.character(tsv$SV_chrom),
+      ranges = IRanges(
+        as.numeric(tsv$SV_start),
+        as.numeric(tsv$SV_start) + as.numeric(tsv$SV_length) - 1
+      )
+    )
+  } else {
+    gr_sv <- GRanges(
+      seqnames = as.character(tsv$SV_chrom),
+      ranges = IRanges(as.numeric(tsv$SV_start), as.numeric(tsv$SV_end))
+    )
+  }
 
   register(MulticoreParam(workers = workers))
 
@@ -81,9 +94,11 @@ add_overlap_flag_annotsv <- function(tsv, workers = detectCores()) {
     #   calculate_overlap(tsv[[columns[j]]][i], gr_sv[i])
     # }) |>
     #   unlist()
-    tsv[[flag_columns[j]]] <- bplapply(seq_len(nrow(tsv)), function(i) {
-      calculate_overlap_flag(tsv[[columns[j]]][i], gr_sv[i])
-    }) |>
+    tsv[[flag_columns[j]]] <- bplapply(
+      seq_len(nrow(tsv)), function(i) {
+        calculate_overlap_flag(tsv[[columns[j]]][i], gr_sv[i])
+      }
+    ) |>
       unlist()
   }
 
