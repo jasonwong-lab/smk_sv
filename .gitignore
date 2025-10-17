@@ -1,13 +1,6 @@
-# files/directories of this pipeline to ignore
 .snakemake/
-workflow/singularities/
+config/pep/*.csv
 config/config.yaml
 config/pep/config.yaml
-config/pep/samples.csv
 workflow/profiles/default/config.yaml
-
-# mkdocs documentation
-/site
-
-# OS X stuff
-*.DS_Store
+dag.pdf

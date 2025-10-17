@@ -6,7 +6,7 @@
 
 Minghao Jiang, <jiang01@icloud.com>
 
-## Tools used
+## Tools Used
 
 - SV callers
 
@@ -24,7 +24,7 @@ Minghao Jiang, <jiang01@icloud.com>
 
    [Minimap2](https://github.com/lh3/minimap2), [SAMtools](https://github.com/samtools/samtools), [BCFtools](http://samtools.github.io/bcftools/bcftools.html), [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR), [vcf2maf](https://github.com/mskcc/vcf2maf) (1.6.21), [SnpSift](http://pcingola.github.io/SnpEff/snpsift/introduction/), [duphold](https://github.com/brentp/duphold)
 
-## Pipeline structure
+## Pipeline Structure
 
 ```mermaid
 %%{
@@ -102,47 +102,73 @@ flowchart TD
   annotated_vcf --> germline_vcf
 ```
 
-## Getting started
+## Recommended Project Structure
+
+```text
+project/
+├── data/
+│   └── wgs/
+│       └── sample_xx.fq.gz
+├── code/
+│   └── wgs/
+│       └── smk_sv/
+└── analysis/
+    └── wgs/
+        ├── cutesv/
+        |   └── sample_xx/
+        |       └── merged/
+        |           └── filtered/
+        ├── sniffles/
+        |   └── sample_xx/
+        |       └── merged/
+        |           └── filtered/
+        └── survivor/
+            └── sample_xx/
+                └── final/
+```
+
+## Getting Started
 
 ### Prerequisites
 
-1. Clone this repo and navigate into it:
+#### Setup
 
-   ```shell
-   git clone https://github.com/jasonwong-lab/smk_sv.git
-   cd smk_sv
-   ```
+```shell
+git clone https://github.com/jasonwong-lab/smk_sv.git
+cd smk_sv/
+cp config/config-test.yaml config/config.yaml
+cp workflow/profiles/default/config-test.yaml workflow/profiles/default/config.yaml
+cp config/pep/samples-test.csv config/pep/samples.csv
+cp config/pep/config-test.yaml config/pep/config.yaml
+```
 
-   - Follow all steps below after you are in the top dir of this repo.
-   - Uncomment all rules in the `Snakefile`.
-   - Check the predefined `wildcards_constraints` in the `Snakefile` and modify/delete it if necessary.
-   - Using a JSON schema to validate the configuration file might prevent Snakemake from monitoring changes to the parameters. You can comment the `validate(config, "config/config.schema.json")` in the `Snakefile`.
-
-2. Install [AnnotSV](https://github.com/lgmgeo/AnnotSV) manually.
-   - AnnotSV is not included in the image due to its large annotation resources (~ 20GB) that cannot be specified elsewhere.
-   - Creating a lock file for each combination of sample and type_sv has been implemented. However, AnnotSV might still encounter errors since it doesn’t support processing multiple files within the same directory. To address this, an additional resource parameter `constraint_annotsv=1` has been added to the rule `annotate_sv_annotsv` to ensure that only one instance of AnnotSV runs at a time. You can modify this parameter in `workflow/profile/default/config.yaml` where its default is `1`.
+- Follow all steps below after you are in the top dir of this repo.
+- Uncomment all rules in the `Snakefile`.
+- Check the predefined `wildcards_constraints` in the `Snakefile` and modify/delete it if necessary.
+- Using a JSON schema to validate the configuration file might prevent Snakemake from monitoring changes to the parameters. You can comment the `validate(config, "config/config.schema.json")` in the `Snakefile`.
 
 ### Configuration
 
-1. Prepare config files:
-   1. Copy `config/config-test.yaml` to `config/config.yaml`.
-      - Adjust the configuration settings according to your project's needs.
-      - Specification of important elements:
-         - `dir_run`: working directory where all results will be stored.
-         - `mapper`: dict whose keys are names of mappers and values (boolean) indicate whether perform mapping or not. Only the first mapper will be used. When a mapper is specified and its value is `false`, no mapping by this mapper will be performed, but its results will be used in the following steps.
-         - `callers`: dict whose keys are names of callers and values (boolean) indicate whether perform SV calling using this caller or not. When a caller is specified and its value is `false`, no SV calling by this caller will be performed, but its results will be used in the following steps.
-         - `types_sv`: SV types to be called. BND indicates translocations.
-         - `threads`: number of CPUs of each rule to be used.
-         - ...
-   2. Copy `workflow/profiles/default/config-test.yaml` to `workflow/profiles/default/config.yaml`.
-      - Bind directories you need in the container.
-      - Change the number of CPUs you prefer.
-      - Modify/add/delete other parameters of this snakemake pipeline.
+#### Config File - `config/config.yaml`
 
-2. Prepare sample data:
-   1. Copy `config/pep/samples-test.csv` to `config/pep/samples.csv`, and update `sample_name` in the csv.
-   2. Copy `config/pep/config-test.yaml` and `config/pep/config.yaml`.
-   More information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
+- Adjust the configuration settings according to your project's needs.
+- Specification of important elements:
+  - `dir_run`: working directory where all results will be stored.
+  - `mapper`: dict whose keys are names of mappers and values (boolean) indicate whether perform mapping or not. Only the first mapper will be used. When a mapper is specified and its value is `false`, no mapping by this mapper will be performed, but its results will be used in the following steps.
+  - `callers`: dict whose keys are names of callers and values (boolean) indicate whether perform SV calling using this caller or not. When a caller is specified and its value is `false`, no SV calling by this caller will be performed, but its results will be used in the following steps.
+  - `types_sv`: SV types to be called. BND indicates translocations.
+  - ...
+
+#### Profile - `workflow/profiles/default/config.yaml`
+
+- Bind directories you need in the container.
+- Change the number of CPUs you prefer.
+- Modify/add/delete other parameters of this snakemake pipeline.
+
+#### Sample Meatadata - `config/pep/`
+
+1. `config/pep/samples.csv`: update `sample_name` in the csv.
+2. `config/pep/config.yaml`: more information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
 
 3. Set up Conda environments:
 
@@ -152,27 +178,33 @@ flowchart TD
 
 ### Execution
 
-- Run the pipeline locally:
+#### Local Execution
 
-   ```shell
-   snakemake
-   ```
+```shell
+snakemake
+```
 
-- Run the pipeline on a cluster:
-   If you want to run this pipeline on a cluster (e.g., SLURM, or PBS), you should customise your own profile and place it into `~/.config/snakemake/`, and then run the pipeline with the profile you have set as a parameter:
+#### Cluster Execution
 
-   ```shell
-   snakemake --profile <your_profile_name>
-   ```
+If you want to run this pipeline on a cluster (e.g., SLURM, or PBS), you should customise your own profile and place it into `~/.config/snakemake/`, and then run the pipeline with the profile:
 
-   Or run the pipeline with the profile you have set as an environment variable:
+```shell
+snakemake --profile <your_profile_name>
+```
 
-   ```shell
-   export SNAKEMAKE_PROFILE=<your_profile_name>
-   snakemake
-   ```
+Or run the pipeline with the profile you have set as an environment variable:
 
-   You can refer to the profile I have been using at `workflow/profiles/mycluster`, or turn to snakemake websites.
+```shell
+export SNAKEMAKE_PROFILE=<your_profile_name>
+snakemake
+```
+
+You can refer to the profile I have been using (`workflow/profiles/mycluster`):
+
+```shell
+[ -d ~/.config/snakemake ] || mkdir -p ~/.config/snakemake
+ln -s `pwd`/workflow/profiles/mycluster ~/.config/snakemake/
+```
 
 ## Note for Cluster Users
 

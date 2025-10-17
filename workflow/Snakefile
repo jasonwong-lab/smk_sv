@@ -1,92 +1,33 @@
-import math
-from pathlib import Path
-from snakemake.utils import validate
+include: "rules/common.smk"
 
 
-# *--------------------------------------------------------------------------* #
-# * Configuration                                                            * #
-# *--------------------------------------------------------------------------* #
-configfile: "config/config.yaml"
-
-
-# validate(config, "config/config.schema.json")
-
-
-pepfile: "config/pep/config.yaml"
-
-
-wildcard_constraints:
-    sample=r"\w+",
-    type_sv=r"\w+",
-    caller=r"\w+",
-
-
-if config["dir_run"]:
-
-    workdir: config["dir_run"]
-
-
-MAPPERS = ["minimap2"]
-
-
-CALLERS = [
-    "cutesv",
-    "sniffles",
-    "svim",
-    "severus",
-    "svision",
-    "debreak",
-    "delly",
-    "nanosv",
-    "nanovar",
-]
-
-
-SAMPLES = pep.sample_table["sample_name"]
-
-
-NUMBER_SAMPLES = len(SAMPLES)
-
-
-NUMBER_CALLERS = len(
-    [caller for caller, enabled in config["callers"].items() if enabled]
-)
-
-
-# *--------------------------------------------------------------------------* #
-# * Define results to be retrieved                                           * #
-# *--------------------------------------------------------------------------* #
 rule all:
     input:
-        output_required=expand(
-            "survivor/{sample}/final/{sample}.{type_sv}.merged.vcf",
-            sample=SAMPLES,
-            type_sv=config["types_sv"],
-        ),
+        get_targets(),
 
 
-# *--------------------------------------------------------------------------* #
-# * All included rules                                                       * #
-# *--------------------------------------------------------------------------* #
-mapper = list(config["mapper"].keys())[0]
-
-
-if mapper in MAPPERS and config["mapper"][mapper]:
-
-    include: f"rules/mappers/{mapper}.smk"
+include: f"rules/mapper/{MAPPER}.smk"
+include: "rules/samtools/faidx.smk"
+include: "rules/caller/clair3.smk"
 
 
 for caller in CALLERS:
-    if caller in config["callers"] and config["callers"][caller]:
 
-        include: f"rules/callers/{caller}.smk"
+    include: f"rules/caller/{caller}.smk"
 
 
-include: "rules/filter_sv.smk"
-include: "rules/split_vcf.smk"
-include: "rules/annotate_sv.smk"
-include: "rules/merge_sv.smk"
-include: "rules/extract_annotation.smk"
-include: "rules/convert_annotation.smk"
-include: "rules/filter_sv_annotation.smk"
-include: "rules/merge_sv_final.smk"
+include: "rules/filtration/duphold.smk"
+include: "rules/filtration/hard_filter.smk"
+include: "rules/filtration/separate_types.smk"
+
+
+for annotator in ANNOTATORS:
+
+    include: f"rules/annotator/{annotator}.smk"
+
+
+include: "rules/filtration/survivor.smk"
+include: "rules/filtration/extract_annotations.smk"
+include: "rules/filtration/convert_annotations.smk"
+include: "rules/filtration/filter_annotations.smk"
+include: "rules/filtration/survivor_final.smk"

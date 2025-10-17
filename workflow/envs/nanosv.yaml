@@ -1,8 +1,4 @@
 channels:
-  - conda-forge
-  - anaconda
   - bioconda
-  - defaults
 dependencies:
-  - bcftools=1.20
   - nanosv=1.2.4

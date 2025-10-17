@@ -1,10 +1,7 @@
 channels:
   - conda-forge
-  - anaconda
   - bioconda
-  - defaults
 dependencies:
-  - bcftools=1.20
   - bedtools=2.31.1
   - minimap2=2.28
   - pip=24.0

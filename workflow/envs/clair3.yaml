@@ -1,12 +1,6 @@
 channels:
-  - conda-forge
-  - anaconda
   - bioconda
-  - defaults
+  - conda-forge
 dependencies:
-  - clair3=1.0.8
-  - pip=24.0
+  - clair3=1.1.2
   - python=3.9.0
-  - pip:
-      - tensorflow-addons==0.23.0
-      - typeguard==2.13.3

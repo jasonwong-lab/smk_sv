@@ -157,33 +157,33 @@ filter_vep <- function(v, maf_vep, t) {
     BND = {
       maf_vep |>
         dplyr::filter(
-          as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 | as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01 | as.numeric(vcf_qual) < min_qual
+          as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 | as.numeric(gnomADe_AF) >= 0.01 | as.numeric(gnomADe_EAS_AF) >= 0.01 | as.numeric(vcf_qual) < min_qual
         )
     },
     DEL = {
       maf_vep |>
         dplyr::filter(
-          as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 | as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01 | as.numeric(vcf_qual) < min_qual
+          as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 | as.numeric(gnomADe_AF) >= 0.01 | as.numeric(gnomADe_EAS_AF) >= 0.01 | as.numeric(vcf_qual) < min_qual
         )
     },
     INS = {
       maf_vep |>
         dplyr::filter(
           as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 |
-            as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01 |
+            as.numeric(gnomADe_AF) >= 0.01 | as.numeric(gnomADe_EAS_AF) >= 0.01 |
             as.numeric(vcf_qual) < min_qual
         )
     },
     INV = {
       maf_vep |>
         dplyr::filter(
-          as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 | as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01 | as.numeric(vcf_qual) < min_qual
+          as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 | as.numeric(gnomADe_AF) >= 0.01 | as.numeric(gnomADe_EAS_AF) >= 0.01 | as.numeric(vcf_qual) < min_qual
         )
     },
     DUP = {
       maf_vep |>
         dplyr::filter(
-          as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 | as.numeric(gnomAD_AF) >= 0.01 | as.numeric(gnomAD_EAS_AF) >= 0.01 | as.numeric(vcf_qual) < min_qual
+          as.numeric(AF) >= 0.01 | as.numeric(EAS_AF) >= 0.01 | as.numeric(ASN_AF) >= 0.01 | as.numeric(gnomADe_AF) >= 0.01 | as.numeric(gnomADe_EAS_AF) >= 0.01 | as.numeric(vcf_qual) < min_qual
         )
     }
   ) |>

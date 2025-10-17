@@ -1,7 +1,4 @@
 channels:
-  - conda-forge
-  - anaconda
   - bioconda
-  - defaults
 dependencies:
   - cutesv=2.1.1

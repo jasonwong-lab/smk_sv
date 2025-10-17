@@ -1,11 +1,6 @@
 channels:
-  - conda-forge
-  - anaconda
   - bioconda
-  - defaults
 dependencies:
-  - perl=5.32.1
-  - snpeff=5.2
-  - snpsift=5.2
-  - unzip=6.0
-  - vcf2maf=1.6.21
+  - vcf2maf=1.6.22
+  - samtools=1.22
+  - htslib=1.22

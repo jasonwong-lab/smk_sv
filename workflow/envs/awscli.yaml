@@ -1,0 +1,7 @@
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - awscli=2.27.53
+  - snpeff=5.2
+  - ensembl-vep=114.2

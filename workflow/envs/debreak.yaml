@@ -1,8 +1,4 @@
 channels:
-  - conda-forge
-  - anaconda
   - bioconda
-  - defaults
 dependencies:
-  - bcftools=1.9
   - debreak=1.3

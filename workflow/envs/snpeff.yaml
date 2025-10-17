@@ -1,4 +1,5 @@
 channels:
   - bioconda
 dependencies:
-  - minimap2=2.30
+  - snpeff=5.2
+  - snpsift=5.2

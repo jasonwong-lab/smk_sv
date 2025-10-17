@@ -1,8 +1,0 @@
-channels:
-  - anaconda
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - ensembl-vep=111.0
-  - snpeff=5.2

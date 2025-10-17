@@ -1,8 +1,6 @@
 channels:
   - conda-forge
-  - anaconda
   - bioconda
-  - defaults
 dependencies:
   - bioconductor-biocparallel
   - bioconductor-genomicranges

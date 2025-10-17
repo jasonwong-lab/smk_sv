@@ -3,8 +3,8 @@
 To get the status of a job in the CPOS PBS cluster.
 """
 
-import sys
 import subprocess
+import sys
 
 jobid = sys.argv[1]
 
