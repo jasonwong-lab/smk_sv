@@ -19,7 +19,62 @@ caller="${snakemake_wildcards[caller]}"
 type_sv="${snakemake_wildcards[type_sv]}"
 
 
-{ input_vcf2maf=${vcf_extracted}
+function modify_vcf2maf() {
+    file_vcf2maf=$(which vcf2maf.pl)
+    line_410=$(sed -n '410p' "${file_vcf2maf}")
+    [[ ! ${line_410} =~ ^# ]] && sed -i '410s/^/# /' "${file_vcf2maf}"
+}
+
+function download_snpeff() {
+    if command -v snpsift &> /dev/null && [ -x "$(command -v snpsift)" ]; then
+        echo "[INFO] SnpEff is already installed."
+    else
+        if [ ! -d snpEff ]; then
+            lock_file="snpeff_download.lock"
+            while ! mkdir "${lock_file}" 2>/dev/null; do
+                echo "[INFO] Another instance is downloading SnpEff. Waiting..."
+                sleep 5
+            done
+            if [ -d snpEff ]; then
+                rmdir "${lock_file}"
+                echo "[INFO] SnpEff is already downloaded."
+                return
+            fi
+            echo "[INFO] Downloading SnpEff..."
+            max_attempts=3
+            attempt=0
+            success=0
+            while [ $attempt -lt $max_attempts ] && [ $success -eq 0 ]; do
+                if curl -o snpEff_latest_core.zip 'https://snpeff.blob.core.windows.net/versions/snpEff_latest_core.zip'; then
+                    success=1
+                    unzip snpEff_latest_core.zip && rm -f snpEff_latest_core.zip
+                else
+                    echo "[WARNING] Failed to download SnpEff, attempt $((attempt + 1)) of $max_attempts."
+                    attempt=$((attempt + 1))
+                    sleep 10 # wait before retrying
+                fi
+            done
+            if [ $success -eq 0 ]; then
+                echo "[ERROR] Failed to download SnpEff after $max_attempts attempts. Cleaning up..."
+                [[ -f snpEff_latest_core.zip ]] && rm -f snpEff_latest_core.zip
+                [[ -d snpEff ]] && rm -rf snpEff
+                rmdir "${lock_file}"
+                exit 1
+            fi
+            rmdir "${lock_file}"
+        else
+            echo "[INFO] SnpEff is already downloaded."
+        fi
+    fi
+}
+
+
+{ modify_vcf2maf
+download_snpeff
+# shellcheck disable=SC2155
+export PATH="${PATH}:$(pwd)/snpEff/exec"
+
+input_vcf2maf=${vcf_extracted}
 
 if [ "${caller}" == "svim" ] && [ "${type_sv}" == "DUP" ]; then
     sed -e 's/DUP:TANDEM/DUP/g' -e 's/DUP:INT/DUP/g' "${input_vcf2maf}" > "${input_vcf2maf%.*}".DUP.vcf

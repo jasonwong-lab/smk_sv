@@ -1,0 +1,52 @@
+software-deployment-method:
+  - apptainer
+  - conda
+apptainer-args: "--bind /storage,/home/user"
+conda-prefix: /.snakemake/envs/smk_sv
+scheduler: greedy
+printshellcmds: True
+keep-incomplete: True
+cores: all
+resources:
+  mem_mb: 500000  # 500GB
+default-resources:
+  mem_mb: 10000  # 10GB
+set-threads:
+  annotate_sv_snpeffnvep: 10
+  filter_sv_annotation: 10
+  filter_sv: 10
+  clair3: 10
+  cutesv: 10
+  debreak: 10
+  nanosv: 10
+  nanovar: 10
+  severus: 10
+  sniffles: 10
+  svision: 10
+  minimap2: 10
+  minimap2_index: 10
+set-resources:
+  make_index_minimap2:
+    mem_mb: 50000
+  map_minimap2:
+    mem_mb: 200000
+  phasenhaplotag_bam_clair3:
+    mem_mb: 200000
+  call_sv_cutesv:
+    mem_mb: 100000
+  call_sv_sniffles:
+    mem_mb: 100000
+  call_sv_svim:
+    mem_mb: 100000
+  call_sv_severus:
+    mem_mb: 100000
+  call_sv_svision:
+    mem_mb: 100000
+  annotate_sv_snpeffnvep:
+    mem_mb: 50000
+  annotate_sv_annotsv:
+    mem_mb: 50000
+  filter_sv_annotation:
+    mem_mb: 50000
+  snpeff:
+    mem_mb: 50000

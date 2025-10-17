@@ -28,7 +28,7 @@ rule annotsv:
         input={input.vcf}
         if {{ [ {wildcards.caller} == "cutesv" ] && [ {wildcards.type_sv} == "DEL" ]; }} \\
             || {{ [ {wildcards.caller} == "debreak" ] && [ {wildcards.type_sv} == "DEL" ]; }} \\
-            && [ ${{size_input}} -ge ${{size_max}} ]; then
+            && [ ${{size_input}} -ge ${{max_size_mb}} ]; then
             awk 'BEGIN {{OFS=FS="\\t"}} !/^#/ {{$4 = "N"; $5 = "<DEL>"}} 1' ${{input}} > ${{input%.*}}.4_5.vcf
             input=${{input%.*}}.4_5.vcf
         fi

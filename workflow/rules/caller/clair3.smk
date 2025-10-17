@@ -2,7 +2,7 @@ rule clair3:
     container:
         "docker://hkubal/clair3:latest"
     input:
-        bam=ancient("minimap2/{sample}/{sample}.sorted.bam"),
+        bam=f"{MAPPER}/{{sample}}/{{sample}}.sorted.bam",
         fasta=config["fasta"],
         fai=f"{config['fasta']}.fai",
         model_clair3=config["model_clair3"],
@@ -30,8 +30,7 @@ rule clair3:
             --model_path={input.model_clair3} \\
             --output={params.dir}
 
-        cd {params.dir} || exit 1
-        ln -s $(basename {output.bam}) $(basename {output.bam_renamed})
-        ln -s $(basename {output.bai}) $(basename {output.bai_renamed}); }} \\
+        ln -r -s {output.bam} {output.bam_renamed}
+        ln -r -s {output.bai} {output.bai_renamed}; }} \\
         1> {log} 2>&1
         """

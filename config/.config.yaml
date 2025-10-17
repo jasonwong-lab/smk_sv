@@ -1,0 +1,70 @@
+dir_run: /projects/SV/analysis/wgs
+mapper: minimap2
+callers:
+  - cutesv
+  - severus
+  - sniffles
+  - svim
+  - svision
+annotators:
+  - vep
+  - snpeff
+  - annotsv
+fasta: /doc/reference/fasta/GRCh37.primary_assembly.genome.fa
+index_minimap2: /doc/reference/minimap2/GRCh37.primary_assembly.genome.mmi
+dir_data: /projects/SV/data/wgs
+suffix_fastq: .fq.gz
+bed_tandem_repeats: /doc/sniffles/human_hs37d5.trf.chr.bed
+min_reads: 3
+min_length_reads: 1000
+min_quality_mapping: 20
+min_coverage: 6
+min_size: 100
+max_size: 10000000
+min_dhffc: 0.7
+max_dhbfc: 1.3
+distance_sv:
+  BND: 10
+  DEL: 10
+  INS: 10
+  INV: 10
+  DUP: 10
+n_callers:
+  BND: 3
+  DEL: 3
+  INS: 3
+  INV: 3
+  DUP: 3
+consider_type:
+  BND: false
+  DEL: false
+  INS: false
+  INV: false
+  DUP: false
+consider_strand:
+  BND: false
+  DEL: false
+  INS: false
+  INV: false
+  DUP: false
+estimate_distance:
+  BND: true
+  DEL: true
+  INS: true
+  INV: true
+  DUP: true
+terms_relative: leuka?emia|blood|lymph|myelo|ha?ema|marrow|platel|thrombo|anemia|neutro
+species: homo_sapiens
+genome: GRCh37
+version_snpeff: "87"
+version_vep: 114
+version_annotsv: v3.5
+cache_snpeff: /doc/snpeff
+cache_vep: /.vep
+cache_annotsv: /doc/tool/annotator/annotsv
+max_size_vep: 10000000
+config_nanosv: /doc/nanosv/config.ini
+bed_nanosv: /opt/nanosv/nanosv/bedfiles/hg19_genome_sample.bed
+model_clair3: /doc/clair3/models/r941_prom_sup_g5014
+bed_nvtr: /doc/sniffles/human_hs37d5.trf.chr.bed
+model_svision: /doc/svision/svision-cnn-model.ckpt
