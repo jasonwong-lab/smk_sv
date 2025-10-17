@@ -1,4 +1,8 @@
+<!-- markdownlint-configure-file {"no-inline-html": {"allowed_elements": ["code", "details", "h2", "summary"]}} -->
+
 # A snakemake pipeline to call structural variants from tumor-only ONT data
+
+![License GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)
 
 > :warning: This pipeline is in its early stages. Please use with caution.
 
@@ -14,7 +18,7 @@ Minghao Jiang, <jiang01@icloud.com>
 
 - Annotation tools
 
-   [AnnotSV](https://github.com/lgmgeo/AnnotSV), [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html) (release/111), [SnpEff](http://pcingola.github.io/SnpEff/snpeff/introduction/)
+   [AnnotSV](https://github.com/lgmgeo/AnnotSV), [VEP](https://www.ensembl.org/info/docs/tools/vep/index.html), [SnpEff](http://pcingola.github.io/SnpEff/snpeff/introduction/)
 
 - R packages
 
@@ -22,7 +26,7 @@ Minghao Jiang, <jiang01@icloud.com>
 
 - Other tools
 
-   [Minimap2](https://github.com/lh3/minimap2), [SAMtools](https://github.com/samtools/samtools), [BCFtools](http://samtools.github.io/bcftools/bcftools.html), [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR), [vcf2maf](https://github.com/mskcc/vcf2maf) (1.6.21), [SnpSift](http://pcingola.github.io/SnpEff/snpsift/introduction/), [duphold](https://github.com/brentp/duphold)
+   [Minimap2](https://github.com/lh3/minimap2), [SAMtools](https://github.com/samtools/samtools), [BCFtools](http://samtools.github.io/bcftools/bcftools.html), [SURVIVOR](https://github.com/fritzsedlazeck/SURVIVOR), [vcf2maf](https://github.com/mskcc/vcf2maf), [SnpSift](http://pcingola.github.io/SnpEff/snpsift/introduction/), [duphold](https://github.com/brentp/duphold)
 
 ## Pipeline Structure
 
@@ -102,7 +106,9 @@ flowchart TD
   annotated_vcf --> germline_vcf
 ```
 
-## Recommended Project Structure
+<details>
+
+<summary><h2>Recommended Project Structure</h2></summary>
 
 ```text
 project/
@@ -127,66 +133,222 @@ project/
                 └── final/
 ```
 
-## Getting Started
+</details>
 
-### Prerequisites
+## Prerequisites
 
-#### Setup
+- [**Python**](https://www.python.org)
+- [**Snakemake**](https://snakemake.github.io)
+- [**eido**](https://pep.databio.org/eido/)
+- [**SAMtools**](https://www.htslib.org)
+- [**Mamba**](https://mamba.readthedocs.io/en/latest/) (recommended) or [**conda**](https://docs.conda.io/projects/conda/en/stable/)
+
+Additional dependencies are automatically installed by **Mamba** or **conda**. Environments are defined in yaml files under `workflow/envs/`.
 
 ```shell
+# ---------------------------------------------------------------------------- #
+# Install Mamba and SAMtools manually. Since conda-packaged SAMtools           #
+# occasionally encounters issues, this workflow presumes that samtools is      #
+# executable within your system's PATH.                                        #
+# ---------------------------------------------------------------------------- #
+if ! command -v mamba &> /dev/null; then
+    "${SHELL}" <(curl -L micro.mamba.pm/install.sh)
+    source ~/.bashrc
+fi
+
+if ! command -v samtools &> /dev/null; then
+    [ -d ${HOME}/.local/opt ] || mkdir -p ${HOME}/.local/opt
+    wget 'https://github.com/samtools/samtools/releases/download/1.22.1/samtools-1.22.1.tar.bz2'
+    tar -xvf samtools-1.22.1.tar.bz2
+    cd samtools-1.22.1
+    ./configure --prefix=${HOME}/.local/opt/samtools
+    make
+    make install
+    echo "export PATH=\${HOME}/.local/opt/samtools/bin:\${PATH}" >> ~/.bashrc
+    source ~/.bashrc
+    rm -rf samtools-1.22.1 samtools-1.22.1.tar.bz2
+fi
+
+# Install Snakemake and eido using pipx (https://pipx.pypa.io/stable/)
+pipx install snakemake
+pipx inject snakemake eido
+
+# Clone the repository
 git clone https://github.com/jasonwong-lab/smk_sv.git
 cd smk_sv/
-cp config/config-test.yaml config/config.yaml
-cp workflow/profiles/default/config-test.yaml workflow/profiles/default/config.yaml
-cp config/pep/samples-test.csv config/pep/samples.csv
-cp config/pep/config-test.yaml config/pep/config.yaml
+
+# Initialize configuration
+cp config/.config.yaml config/config.yaml
+cp config/pep/.config.yaml config/pep/config.yaml
+cp workflow/profiles/default/.config.yaml workflow/profiles/default/config.yaml
 ```
 
-- Follow all steps below after you are in the top dir of this repo.
-- Uncomment all rules in the `Snakefile`.
-- Check the predefined `wildcards_constraints` in the `Snakefile` and modify/delete it if necessary.
-- Using a JSON schema to validate the configuration file might prevent Snakemake from monitoring changes to the parameters. You can comment the `validate(config, "config/config.schema.json")` in the `Snakefile`.
+## Configuration
 
-### Configuration
+### Main Configuration
 
-#### Config File - `config/config.yaml`
+<details>
 
-- Adjust the configuration settings according to your project's needs.
-- Specification of important elements:
-  - `dir_run`: working directory where all results will be stored.
-  - `mapper`: dict whose keys are names of mappers and values (boolean) indicate whether perform mapping or not. Only the first mapper will be used. When a mapper is specified and its value is `false`, no mapping by this mapper will be performed, but its results will be used in the following steps.
-  - `callers`: dict whose keys are names of callers and values (boolean) indicate whether perform SV calling using this caller or not. When a caller is specified and its value is `false`, no SV calling by this caller will be performed, but its results will be used in the following steps.
-  - `types_sv`: SV types to be called. BND indicates translocations.
-  - ...
+<summary>Edit <code>config/config.yaml</code></summary>
 
-#### Profile - `workflow/profiles/default/config.yaml`
+```yaml
+dir_run: /projects/SV/analysis/wgs
+mapper: minimap2
+callers:
+  - cutesv
+  - severus
+  - sniffles
+  - svim
+  - svision
+annotators:
+  - vep
+  - snpeff
+  - annotsv
+fasta: /doc/reference/fasta/GRCh37.primary_assembly.genome.fa
+index_minimap2: /doc/reference/minimap2/GRCh37.primary_assembly.genome.mmi
+dir_data: /projects/SV/data/wgs
+suffix_fastq: .fq.gz
+bed_tandem_repeats: /doc/sniffles/human_hs37d5.trf.chr.bed
+min_reads: 3
+min_length_reads: 1000
+min_quality_mapping: 20
+min_coverage: 6
+min_size: 100
+max_size: 10000000
+min_dhffc: 0.7
+max_dhbfc: 1.3
+distance_sv:
+  BND: 10
+  DEL: 10
+  INS: 10
+  INV: 10
+  DUP: 10
+n_callers:
+  BND: 3
+  DEL: 3
+  INS: 3
+  INV: 3
+  DUP: 3
+consider_type:
+  BND: false
+  DEL: false
+  INS: false
+  INV: false
+  DUP: false
+consider_strand:
+  BND: false
+  DEL: false
+  INS: false
+  INV: false
+  DUP: false
+estimate_distance:
+  BND: true
+  DEL: true
+  INS: true
+  INV: true
+  DUP: true
+terms_relative: leuka?emia|blood|lymph|myelo|ha?ema|marrow|platel|thrombo|anemia|neutro
+species: homo_sapiens
+genome: GRCh37
+version_snpeff: "87"
+version_vep: 114
+version_annotsv: v3.5
+cache_snpeff: /doc/snpeff
+cache_vep: /.vep
+cache_annotsv: /doc/tool/annotator/annotsv
+max_size_vep: 10000000
+config_nanosv: /doc/nanosv/config.ini
+bed_nanosv: /opt/nanosv/nanosv/bedfiles/hg19_genome_sample.bed
+model_clair3: /doc/clair3/models/r941_prom_sup_g5014
+bed_nvtr: /doc/sniffles/human_hs37d5.trf.chr.bed
+model_svision: /doc/svision/svision-cnn-model.ckpt
+```
 
-- Bind directories you need in the container.
-- Change the number of CPUs you prefer.
-- Modify/add/delete other parameters of this snakemake pipeline.
+</details>
 
-#### Sample Meatadata - `config/pep/`
+### Execution Profile
 
-1. `config/pep/samples.csv`: update `sample_name` in the csv.
-2. `config/pep/config.yaml`: more information please see [Portable Encapsulated Projects (PEP)](https://pep.databio.org).
+<details>
 
-3. Set up Conda environments:
+<summary>Edit <code>workflow/profiles/default/config.yaml</code></summary>
 
-   ```shell
-   snakemake --conda-create-envs-only
-   ```
+```yaml
+software-deployment-method:
+  - apptainer
+  - conda
+apptainer-args: "--bind /"
+conda-prefix: /.snakemake/envs/smk_sv
+scheduler: greedy
+rerun-trigger: mtime
+printshellcmds: True
+keep-incomplete: True
+cores: all
+resources:
+  mem_mb: 500000  # 500GB
+default-resources:
+  mem_mb: 10000  # 10GB
+set-threads:
+  annotate_sv_snpeffnvep: 10
+  annotsv: 10
+  filter_sv_annotation: 10
+  filter_sv: 10
+  clair3: 10
+  cutesv: 10
+  debreak: 10
+  nanosv: 10
+  nanovar: 10
+  severus: 10
+  snpeff: 10
+  sniffles: 10
+  svision: 10
+  minimap2: 10
+  minimap2_index: 10
+  vep: 10
+set-resources:
+  snpeff:
+    mem_mb: 50000
+  svision:
+    runtime: 72h
+```
 
-### Execution
+</details>
 
-#### Local Execution
+### Sample Metadata
+
+This workflow uses [**Portable Encapsulated Projects (PEP)**](https://pep.databio.org/) for sample management.
+
+<details>
+
+<summary>Edit <code>config/pep/config.yaml</code></summary>
+
+```yaml
+pep_version: 2.1.0
+sample_table: samples.csv    # Path to the sample table (Required)
+```
+
+</details>
+
+The sample table must include one mandatory column:
+
+| **sample_name**                   |
+| --------------------------------- |
+| Unique identifier for each sample |
+
+## Execution
+
+### Local Execution
 
 ```shell
+# Create environments
+snakemake --conda-create-envs-only
+
+# Run the workflow
 snakemake
 ```
 
-#### Cluster Execution
+### Cluster Execution
 
-If you want to run this pipeline on a cluster (e.g., SLURM, or PBS), you should customise your own profile and place it into `~/.config/snakemake/`, and then run the pipeline with the profile:
+If you want to run this pipeline on a cluster (*e.g.*, SLURM, or PBS), you should customise your own profile and place it into `~/.config/snakemake/`, and then run the pipeline with the profile:
 
 ```shell
 snakemake --profile <your_profile_name>
@@ -204,14 +366,6 @@ You can refer to the profile I have been using (`workflow/profiles/mycluster`):
 ```shell
 [ -d ~/.config/snakemake ] || mkdir -p ~/.config/snakemake
 ln -s `pwd`/workflow/profiles/mycluster ~/.config/snakemake/
-```
-
-## Note for Cluster Users
-
-If you are using a cluster that does not support Singularity well, please switch to the `without_docker` branch. This branch is tailored for environments where containers might not be the best option.
-
-```shell
-git checkout without_docker
 ```
 
 ## License
