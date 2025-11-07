@@ -12,10 +12,8 @@ resources:
 default-resources:
   mem_mb: 10000  # 10GB
 set-threads:
-  annotate_sv_snpeffnvep: 10
   annotsv: 10
-  filter_sv_annotation: 10
-  filter_sv: 10
+  filter_annotations: 10
   clair3: 10
   cutesv: 10
   debreak: 10

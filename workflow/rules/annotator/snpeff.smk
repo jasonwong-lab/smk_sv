@@ -23,7 +23,7 @@ rule snpeff:
 
         input={input.vcf}
         if [ {wildcards.caller} == "svision" ] && [ {wildcards.type_sv} == "INS" ]; then
-            awk 'BEGIN {{OFS=FS="\\t"}} !/^#/ && $5 == "<INS>" {{$5 = "N"}} 1' ${{input}} > ${{input%.*}}.5.vcf
+            awk 'BEGIN {{OFS=FS="\\t"}} !/^#/ {{$5 = "INS"}} 1' ${{input}} > ${{input%.*}}.5.vcf
             input=${{input%.*}}.5.vcf
         elif [ {wildcards.caller} == "svision" ] && [ {wildcards.type_sv} != "INS" ]; then
             awk -v var={wildcards.type_sv} 'BEGIN {{OFS=FS="\\t"}} !/^#/ {{$5 = "<"var">"}} 1' ${{input}} > ${{input%.*}}.5.vcf

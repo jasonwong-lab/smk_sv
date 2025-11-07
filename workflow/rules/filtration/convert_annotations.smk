@@ -19,9 +19,23 @@ rule convert_vep:
         if [ {wildcards.caller} == "svim" ] && [ {wildcards.type_sv} == "DUP" ]; then
             sed -e 's/DUP:TANDEM/DUP/g' -e 's/DUP:INT/DUP/g' ${{input}} > ${{input%.*}}.DUP.vcf
             input=${{input%.*}}.DUP.vcf
-        elif [ {wildcards.caller} == "svision" ]; then
+        elif [ {wildcards.caller} == "svision" ] && [ {wildcards.type_sv} != "INS" ]; then
             perl -pe "s/SVTYPE=.*?;/SVTYPE={wildcards.type_sv};/g" ${{input}} > ${{input%.*}}.{wildcards.type_sv}.vcf
             input=${{input%.*}}.{wildcards.type_sv}.vcf
+        elif [ {wildcards.caller} == "svision" ] && [ {wildcards.type_sv} == "INS" ]; then
+            awk -F'\\t' 'BEGIN{{OFS=FS}}
+                /^#/ {{ print; next }}
+                {{
+                    info=$8; csq=".";
+                    if (match(info, /(^|;)CSQ=[^;]*/)) {{
+                        s = substr(info, RSTART, RLENGTH);
+                        sub(/^;/, "", s);
+                        csq = s
+                    }}
+                    $8 = (csq=="" ? "." : csq);
+                    print
+                }}' ${{input}} > ${{input%.*}}.INS.vcf
+            input=${{input%.*}}.INS.vcf
         fi
 
         vcf2maf.pl \\
